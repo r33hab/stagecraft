@@ -1,0 +1,16 @@
+---
+import Base from '../layouts/Base.astro';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<Base title="Nordlys GP · Off track" description="That page is not on the circuit. Head back to the start line.">
+  <section class="hero chapter" data-theme="ink" aria-labelledby="nf-title">
+    <p class="hero__num" aria-label="Error 404"><small>Error</small><span aria-hidden="true">404</span></p>
+    <div class="hero__grid">
+      <div>
+        <h1 class="display hero__title" id="nf-title">Off track.</h1>
+        <p class="lede" style="margin-top:1.5rem">That page is not on the circuit. Back to the start line, or straight to the lap.</p>
+        <div class="hero__meta"><a class="pill" href={`${base}/`}>Start line</a><a class="pill pill--ghost" href={`${base}/#lap`}>The lap</a></div>
+      </div>
+    </div>
+  </section>
+</Base>

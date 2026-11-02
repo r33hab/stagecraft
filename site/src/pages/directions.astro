@@ -1,0 +1,25 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import NextDoor from '../components/NextDoor.astro';
+import { directions, doors } from '../data/site';
+const d = doors[1];
+---
+<Base title="Directions · stagecraft" description={d.promise} slug="directions">
+  <PageHead n="02" slug="directions" name={d.name} title={d.title} lede="Each direction is a complete recipe: surface, type, colour, layout, motion signature, hero, mobile translation and cost. The skill rotates them so two sites in a row never look alike." />
+  <section class="chapter specimens" id="specimens" data-theme="ink" aria-labelledby="dir-title">
+    <h2 class="sr-only" id="dir-title">The sixteen directions</h2>
+    <ol class="specimens__grid" data-reveal-group>
+      {directions.map((x, i) => (
+        <li class="specimen" style={`--s-bg:${x.bg};--s-fg:${x.fg};--s-accent:${x.accent}`} data-reveal>
+          <span class="specimen__k"><span>{String(i + 1).padStart(2, '0')}</span><span>{x.name}</span></span>
+          <p class="specimen__sample" data-face={x.face} data-caps={String(x.caps)} style={`font-weight:${x.weight}`}>{x.sample}</p>
+          <p class="specimen__feel">{x.feel}</p>
+          <span class="specimen__sw" aria-hidden="true"><i style={`background:${x.bg}`}></i><i style={`background:${x.fg}`}></i><i style={`background:${x.accent}`}></i></span>
+        </li>
+      ))}
+    </ol>
+    <p class="specimens__note">Remix axes (surface, type voice, motion temperament, colour stance, hero object, navigation, rhythm) make hundreds more. The skill rotates directions so two sites in a row never look alike.</p>
+  </section>
+  <NextDoor slug="directions" />
+</Base>

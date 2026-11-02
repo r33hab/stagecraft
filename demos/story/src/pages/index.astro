@@ -1,0 +1,97 @@
+---
+import '../styles/global.css';
+import { chapters, specs, callouts } from '../data/halde';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const title = 'Halde 8 · A 1958 cine camera, restored by hand';
+const description = 'The Halde 8, an 8 mm cine camera from 1958, restored by hand in Oslo, twelve a year: its turret, its clockwork, the bench and the waiting list.';
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#121315" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="article" />
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site ?? 'https://r33hab.github.io').href} />
+    <link rel="icon" href={`${base}/favicon.svg`} type="image/svg+xml" />
+    <link rel="preload" as="font" type="font/woff2" href={`${base}/fonts/instrument-serif.woff2`} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={`${base}/fonts/inter-tight.woff2`} crossorigin />
+    <style is:global set:html={`
+      @font-face { font-family: 'Inter Tight'; src: url('${base}/fonts/inter-tight.woff2') format('woff2'); font-weight: 100 900; font-display: swap; }
+      @font-face { font-family: 'Instrument Serif'; src: url('${base}/fonts/instrument-serif.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+      @font-face { font-family: 'JetBrains Mono'; src: url('${base}/fonts/jetbrains-mono.woff2') format('woff2'); font-weight: 100 800; font-display: swap; }
+      @font-face { font-family: 'Inter Tight Fallback'; src: local('Arial'); size-adjust: 97%; ascent-override: 92%; descent-override: 24%; line-gap-override: 0%; }
+    `}></style>
+    <script is:inline>
+      (function () {
+        var d = document.documentElement; d.classList.add('js');
+        var n = navigator, reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var mem = n.deviceMemory || 8, cores = n.hardwareConcurrency || 8, save = !!(n.connection && n.connection.saveData);
+        var coarse = matchMedia('(pointer: coarse)').matches;
+        d.dataset.tier = (reduce || save || mem <= 2 || cores <= 2) ? 'low' : (mem <= 4 || cores <= 4 || coarse) ? 'mid' : 'high';
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="top">
+      <a class="top__brand" href={`${base}/`}>Halde 8</a>
+      <nav class="top__nav" aria-label="Primary">{chapters.map((c) => <a href={`#${c.id}`}>{c.time}</a>)}<a href="#plan">Join</a></nav>
+    </header>
+    <main id="main" tabindex="-1">
+      <section class="stage" data-stage aria-label="The Halde 8, chapter by chapter">
+        <div class="stage__sky" aria-hidden="true" data-dynamic><i class="stage__studio"></i><img class="stage__poster" src={`${base}/kino/stills/made.jpg`} alt="" width="1920" height="1080" decoding="async" fetchpriority="high" /><canvas data-world data-src={base}></canvas></div>
+        <div class="stage__hud"><p class="stage__model">Model 1958 · double 8</p><span class="stage__time" data-time aria-hidden="true">FT 00</span></div>
+        <nav class="stage__rail" aria-label="Chapters">{chapters.map((c, i) => <a href={`#${c.id}`} class:list={[{ 'is-active': i === 0 }]} data-dot={i} aria-label={`${c.title}, ${c.time}`}></a>)}</nav>
+        {chapters.map((c, i) => (
+          <article class="ch" id={c.id} data-ch={i} data-allow-hidden={i > 0 ? '' : undefined}>
+            <img class="ch__still" src={`${base}/kino/stills/${c.id}.jpg`} alt="" width="1920" height="1080" loading="lazy" decoding="async" />
+            <span class="ch__time mono">{c.time}</span>
+            {i === 0 ? <h1 class="ch__title">{c.title}</h1> : <h2 class="ch__title">{c.title}</h2>}
+            <p class="ch__text">{c.text}</p>
+          </article>
+        ))}
+        <div class="callouts" aria-hidden="true">{callouts.map((c, i) => (
+          <div class:list={["co", { "is-left": c.dx < 0 }]} data-co={i} data-co-chapter={c.chapter} data-co-anchor={c.anchor} data-dx={c.dx} style={`--dx:${c.dx}px;--dy:${c.dy}px`}>
+            <svg class="co__line" width="1" height="1" overflow="visible"><line x1="0" y1="0" x2={c.dx} y2={c.dy} pathLength="1" /></svg>
+            <i class="co__dot"></i><span class="co__txt">{c.text}</span>
+          </div>
+        ))}</div>
+        <p class="scroll-cue" aria-hidden="true">Scroll · six chapters, one camera</p>
+      </section>
+
+      <section class="chapter" aria-labelledby="specs-title">
+        <div class="chapter__head"><span>The camera</span></div>
+        <h2 id="specs-title" class="ch__title" style="font-size:var(--text-2xl);margin-bottom:1.5rem" data-reveal>Six numbers</h2>
+        <ul class="facts" data-reveal data-reveal-group>{specs.map((f, i) => <li data-n={String(i + 1).padStart(2, '0')}>{f}</li>)}</ul>
+      </section>
+
+      <section class="chapter" id="plan" aria-labelledby="plan-title">
+        <div class="chapter__head"><span>Join the list</span></div>
+        <div class="plan">
+          <div>
+            <h2 class="plan__title" id="plan-title" data-reveal>The next twelve</h2>
+            <p data-reveal style="margin-top:1rem;max-width:40ch;color:var(--fg-muted)">NOK 14 800, including the first roll. One message when your camera is on the bench, and one when it runs.</p>
+          </div>
+          <form class="form" action="#plan" method="get" data-signup data-astro-reload data-reveal>
+            <label for="email">Email</label>
+            <input id="email" type="email" autocomplete="email" required placeholder="you@example.com" />
+            <button class="pill" type="submit">Put me on the list</button>
+            <p class="form__hint">Twelve a year. No other mail.</p>
+            <p class="form__done" data-signup-done role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </section>
+    </main>
+    <footer class="foot">
+      <p class="foot__statement" data-reveal>Sixteen frames a second. For another sixty years.</p>
+      <p class="foot__legal"><span>Halde is fictional.</span><span>Model: "Vintage Video Camera" by Jenelle van Heerden and James Ray Cock, Poly Haven (CC0). Light: Poly Haven studio HDRI (CC0).</span><span>Built with the stagecraft skill: Astro, GSAP, Lenis, three.js.</span></p>
+    </footer>
+    <div class="cursor" data-cursor aria-hidden="true"></div>
+    <script src="../scripts/site.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,40 @@
+---
+import Base from '../layouts/Base.astro';
+import { drivers, staff, team } from '../data/season';
+---
+<Base title="Nordlys GP · Team" description="The drivers and the people behind Nordlys GP: Sigrid Haugen, Teodor Vik, reserve driver Ines Carvalho and the senior staff." theme="paper">
+  <section class="page-head chapter" data-theme="paper">
+    <p class="label" data-reveal>Drivers and staff</p>
+    <h1 class="display" data-reveal>Team <span class="count">({drivers.length + staff.length})</span></h1>
+  </section>
+  <section class="chapter" data-theme="paper" style="padding-top:0" aria-label="Drivers">
+    {drivers.map((d) => (
+      <article class="profile" id={`driver-${d.num}`} data-reveal>
+        <div>
+          <p class="profile__num" transition:name={`num-${d.num}`}>{d.num}</p>
+          <div class="slot" style="margin-top:1rem">Photo slot · {d.name}, portrait</div>
+        </div>
+        <div>
+          <p class="label">{d.role}</p>
+          <h3>{d.name}</h3>
+          <p>{d.bio}</p>
+          <dl>
+            <dt>Born</dt><dd>{d.born}</dd>
+            <dt>Debut</dt><dd>{d.debut}</dd>
+            <dt>Starts</dt><dd>{d.starts}</dd>
+            <dt>Podiums</dt><dd>{d.podiums}</dd>
+            <dt>Wins</dt><dd>{d.wins}</dd>
+            <dt>Best</dt><dd>{d.best}</dd>
+          </dl>
+        </div>
+      </article>
+    ))}
+  </section>
+  <section class="chapter" data-theme="ink" aria-labelledby="staff-title">
+    <div class="chapter__head"><span>Senior staff · {team.base}</span></div>
+    <h2 class="display" id="staff-title" style="font-size:var(--text-2xl);margin-bottom:1.5rem" data-reveal>Pit wall</h2>
+    <dl class="spec" data-reveal data-reveal-group>
+      {staff.map((s) => <div><dt>{s.role}</dt><dd>{s.name}</dd></div>)}
+    </dl>
+  </section>
+</Base>

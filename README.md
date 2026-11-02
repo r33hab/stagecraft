@@ -3,11 +3,13 @@
 A Claude Code skill for award-calibre, animated, scroll-driven websites that still run smoothly on
 low-end phones, with a bundled Playwright suite that enforces the budgets.
 
-It asks four plain questions (what the site is for, who edits it, how far the motion goes, a feel),
-decides the stack itself, picks one of sixteen design directions (or remixes a new one), builds the
-static frame first, then the motion layer with device tiering and reduced-motion handling, then
-runs a test suite across desktop, a throttled low-end Android profile, iPhone WebKit, Firefox and
-reduced motion.
+It asks plain questions about the situation (what the site is for, who edits it, how far the
+motion goes, a feel, what is worth showing, how people move through it, what there is to show),
+decides the stack itself, picks one of sixteen design directions (or remixes a new one) and one
+object to carry through every chapter, builds the static frame first, then the motion layer with
+measured numbers for transitions, text reveals and reading time, device tiering and reduced-motion
+handling. It then watches the result frame by frame at reading pace and runs a test suite across
+desktop, a throttled low-end Android profile, iPhone WebKit, Firefox and reduced motion.
 
 ## Install
 
@@ -25,25 +27,31 @@ https://…", or "stagecraft test".
 ```
 SKILL.md                 the flow: intake, concept, stack, tokens, story, build order, test, critique
 references/
-  intake.md              four questions nobody can answer wrong, answer-to-stack tables
+  intake.md              questions nobody can answer wrong, what material exists, answer-to-stack tables
+  craft.md               the numbers: carrier, chapter edges, text reveal and hold, pins, horizontal, loaders, easing, 3D craft
   directions.md          sixteen directions with tokens, motion signatures, mobile translations; remix axes
   story.md               the scroll-narrative grammar: gate, statement, chapters, transitions, ending
   motion.md              motion tokens, CSS-first then GSAP, reduced motion, the never-stuck rule, recipes
   performance.md         budgets, device tiers, the LCP path, mobile pitfalls, 3D rules
   typography.md          pairings, fluid scale, font loading
-  color.md               semantic OKLCH tokens, palettes from winning sites, contrast
+  color.md               semantic OKLCH tokens, palettes, contrast
   ux.md                  navigation, keyboard, touch, forms, consent, SEO, copy honesty
-  stack.md               decision table, versions, do-not-use list, wiring per framework
+  stack.md               decision table, versions, do-not-use list, wiring, sourcing assets, filming the work
   testing.md             the suite, budgets file, reading failures, CI
-  critique.md            rubric, juror test, anti-patterns, most frequent fixes
-  field-notes.md         twenty studied winners: what you see and how it is built
+  choreography.md        twenty-one moves with mechanics: handoffs, stages, dollies, disassembly, logo as window
+  critique.md            rubric, review pass, anti-patterns, most frequent fixes
+  field-notes.md         26 worked examples: hook, carrier, edges, text, craft and numbers for each
 assets/
-  runtime/               tier.ts, reveal.ts, lenis-gsap.ts, motion.css (copy into a project)
+  runtime/               tier.ts, reveal.ts, lenis-gsap.ts, motion.css, hero-scene.ts (a real GLB under studio light)
   tests/                 playwright.config.ts, tests/*.spec.ts, stagecraft.budgets.json, lighthouserc.json
 scripts/
   add-tests.mjs          installs the suite into a project and wires npm scripts
   check-budgets.mjs      static gzip weight check on a build output
+  frames.mjs             watches a page at reading pace: contact sheets, a text timeline, a reading verdict
+  film.mjs               films a page as seamless video loops at two sizes plus a poster (needs ffmpeg)
 evals/                   example prompts for skill testing
+site/                    the skill's site (GitHub Pages), built with the skill
+demos/                   three briefs built twice: with the skill, and without it by a smaller model
 ```
 
 ## The test suite on its own
@@ -61,7 +69,8 @@ It checks: page basics and console errors; horizontal overflow at seven widths a
 size; axe WCAG 2.2 AA, keyboard order, focus visibility, skip link, menu escape; reveals that never
 fired (content stuck hidden), layout stability, keyboard scrolling, preloader timing, custom cursor on
 touch, reduced motion; LCP, CLS, long tasks, scroll frame times, transfer by type, font families, DOM
-size, hero image attributes; and visual baselines on desktop and mobile.
+size, hero image attributes; copy that leaves before it can be read, empty screens and stacked copy
+at reading pace; and visual baselines on desktop and mobile.
 
 ## Licence
 

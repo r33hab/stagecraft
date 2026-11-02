@@ -1,0 +1,48 @@
+---
+import { Image } from 'astro:assets';
+import compare from '../data/compare.json';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const shots = import.meta.glob<{ default: ImageMetadata }>('../assets/shots/*.jpg', { eager: true });
+const shot = (name: string) => shots[`../assets/shots/${name}.jpg`]?.default;
+const L = compare.metricLabels as Record<string, string>;
+const fmt = (k: string, v: any) => {
+  if (v === undefined || v === null || v === '') return '—';
+  if (k === 'lcpMs') return `${(v / 1000).toFixed(1)} s`;
+  if (k === 'scriptKb' || k === 'totalKb') return v >= 1024 ? `${(v / 1024).toFixed(1)} MB` : `${v} KB`;
+  if (k === 'frameP95') return `${v} ms`;
+  if (k === 'reducedMotion' || k === 'cursorTouch' || k === 'budgets') return v === true ? 'yes' : v === false ? 'no' : String(v);
+  if (k === 'cls') return Number(v).toFixed(2);
+  return String(v);
+};
+const keys = Object.keys(L);
+---
+<div class="cmp__list">
+  {compare.demos.map((d, di) => (
+    <article class="cmp" data-reveal>
+      <header class="cmp__head">
+        <h2 class="cmp__title">{d.title} <span class="cmp__kind">{d.kind}</span></h2>
+        <a class="cmp__brief link-arrow" href="https://github.com/r33hab/stagecraft/blob/main/demos/BRIEFS.md" rel="noopener">The brief</a>
+      </header>
+      <div class="cmp__grid">
+        {[['skill', 'With the skill', d.skill], ['base', 'Without, same brief', d.baseline]].map(([key, label, arm]: any) => (
+          <div class:list={['cmp__arm', `cmp__arm--${key}`]}>
+            <a class="cmp__shot" href={`${base}/${arm.path}`} data-astro-reload data-astro-prefetch="false" aria-label={`Open ${d.title}, ${label}`}>
+              {shot(arm.shot) && <Image src={shot(arm.shot)!} alt="" widths={[640, 960]} sizes="(max-width: 900px) 100vw, 45vw" format="webp" quality={72} loading={di === 0 ? "eager" : "lazy"} fetchpriority={di === 0 && key === "skill" ? "high" : undefined} />}
+              <span class="cmp__open" aria-hidden="true">Open ↗</span>
+            </a>
+            <p class="cmp__label">{label}</p>
+            <p class="cmp__sig">{arm.signature}</p>
+          </div>
+        ))}
+      </div>
+      <div class="table-wrap" tabindex="0" role="region" aria-label={`Measured numbers for ${d.title}`}>
+      <table class="table cmp__table">
+        <thead><tr><th>Measured</th><th>With the skill</th><th>Without</th></tr></thead>
+        <tbody>
+          {keys.map((k) => <tr><td>{L[k]}</td><td class="cmp__num">{fmt(k, (d.skill.metrics as any)[k])}</td><td class="cmp__num muted">{fmt(k, (d.baseline.metrics as any)[k])}</td></tr>)}
+        </tbody>
+      </table>
+      </div>
+    </article>
+  ))}
+</div>

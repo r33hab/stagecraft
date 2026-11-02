@@ -39,7 +39,7 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 } },
     },
     {
-      // The jury's phone: a mid/low Android profile. CPU and network throttling are applied in the
+      // The reviewer's phone: a mid/low Android profile. CPU and network throttling are applied in the
       // perf and motion specs through CDP (see fixtures.ts), because Playwright has no device-level throttle.
       name: 'mobile-low',
       use: { ...devices['Pixel 7'], viewport: { width: 412, height: 823 }, deviceScaleFactor: 1.75, isMobile: true, hasTouch: true },

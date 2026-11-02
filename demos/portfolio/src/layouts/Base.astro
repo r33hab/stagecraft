@@ -1,0 +1,60 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import '../styles/global.css';
+import { person } from '../data/work';
+interface Props { title: string; description: string }
+const { title, description } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#f4f2ec" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site ?? 'https://r33hab.github.io').href} />
+    <link rel="icon" href={`${base}/favicon.svg`} type="image/svg+xml" />
+    <link rel="preload" as="font" type="font/woff2" href={`${base}/fonts/inter-tight.woff2`} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={`${base}/fonts/instrument-serif.woff2`} crossorigin />
+    <style is:global set:html={`
+      @font-face { font-family: 'Inter Tight'; src: url('${base}/fonts/inter-tight.woff2') format('woff2'); font-weight: 100 900; font-display: swap; }
+      @font-face { font-family: 'Instrument Serif'; src: url('${base}/fonts/instrument-serif.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+      @font-face { font-family: 'JetBrains Mono'; src: url('${base}/fonts/jetbrains-mono.woff2') format('woff2'); font-weight: 100 800; font-display: swap; }
+      @font-face { font-family: 'Inter Tight Fallback'; src: local('Arial'); size-adjust: 97%; ascent-override: 92%; descent-override: 24%; line-gap-override: 0%; }
+    `}></style>
+    <script is:inline>
+      (function () {
+        var d = document.documentElement; d.classList.add('js');
+        var n = navigator, reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var mem = n.deviceMemory || 8, cores = n.hardwareConcurrency || 8, save = !!(n.connection && n.connection.saveData);
+        var coarse = matchMedia('(pointer: coarse)').matches;
+        d.dataset.tier = (reduce || save || mem <= 2 || cores <= 2) ? 'low' : (mem <= 4 || cores <= 4 || coarse) ? 'mid' : 'high';
+      })();
+    </script>
+    <ClientRouter />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="top" transition:persist="top">
+      <div class="top__col"><a class="top__name" href={`${base}/`}>{person.name}</a><span>{person.title}, {person.city}</span></div>
+      <div class="top__col top__col--time"><span>Local time</span><span class="top__time" data-time data-dynamic>00:00</span></div>
+      <nav class="top__col top__col--nav" aria-label="Primary"><a href={`${base}/#work`}>Work</a><a href={`${base}/#about`}>About</a><a href={`${base}/#contact`}>Contact</a></nav>
+      <a class="pill top__avail" href={`${base}/#contact`}><i class="dot" aria-hidden="true"></i>Available from {person.available}</a>
+    </header>
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <footer class="foot">
+      <p class="foot__statement" data-reveal>Measure on a cheap phone. Motion explains or it goes. Ship the accessible version first.</p>
+      <p class="foot__legal"><span>© {new Date().getFullYear()} {person.name}</span><span>{person.name} is a fictional person; this site demonstrates the stagecraft skill.</span><span>Astro, GSAP, Lenis. Inter Tight, Instrument Serif, JetBrains Mono.</span></p>
+    </footer>
+    <div class="preview" data-preview aria-hidden="true"></div>
+    <div class="cursor" data-cursor aria-hidden="true"></div>
+    <script src="../scripts/site.ts"></script>
+  </body>
+</html>

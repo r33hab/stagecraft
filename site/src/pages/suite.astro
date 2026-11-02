@@ -1,0 +1,42 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import NextDoor from '../components/NextDoor.astro';
+import { suite, budgets, doors } from '../data/site';
+const d = doors[2];
+const measured = [
+  ['LCP on a throttled phone', 0.6, 's', 1], ['Cumulative layout shift', 0.04, '', 2], ['JavaScript on first view', 52, 'KB', 0], ['Scroll frame p95', 16.7, 'ms', 1], ['Serious accessibility violations', 0, '', 0], ['Font families', 3, '', 0],
+];
+---
+<Base title="Suite · stagecraft" description={d.promise} slug="suite">
+  <PageHead n="03" slug="suite" name={d.name} title={d.title} lede="Seven specs across five browser projects, run against the production build. It works on any site, not only ones built with the skill. This site runs it on itself; these are its numbers." />
+  <section class="chapter" id="numbers" data-theme="ink" aria-labelledby="numbers-title">
+    <div class="ticks" aria-hidden="true"><i></i></div>
+    <div class="suite">
+      <div>
+        <h2 class="h2" id="numbers-title" data-reveal>The landing, on a throttled phone</h2>
+        <p class="lede" data-reveal>Measured by the mobile-low project: a 4x CPU slowdown and a slow 4G profile, the state a cheap phone is usually in.</p>
+      </div>
+      <dl class="console" data-console data-reveal data-reveal-group>
+        {measured.map(([k, v, u, dp]) => <div class="console__row"><dt>{k}</dt><dd><span class="console__v" data-count={v} data-dp={dp}>0</span>{u ? ` ${u}` : ''}</dd></div>)}
+      </dl>
+    </div>
+  </section>
+  <section class="chapter" id="specs" aria-labelledby="specs-title">
+    <div class="chapter__head"><span>Specs</span></div>
+    <h2 class="h2" id="specs-title" data-reveal>Seven specs, five projects</h2>
+    <table class="table" data-reveal style="margin-top:2rem">
+      <thead><tr><th>Spec</th><th>Checks</th></tr></thead>
+      <tbody>{suite.map(([k, v]) => <tr><td>{k}</td><td class="muted">{v}</td></tr>)}</tbody>
+    </table>
+  </section>
+  <section class="chapter" id="budgets" aria-labelledby="budgets-title" style="padding-top:0">
+    <div class="chapter__head"><span>Budgets</span></div>
+    <h2 class="h2" id="budgets-title" data-reveal>Edited in one JSON file</h2>
+    <table class="table" data-reveal style="margin-top:2rem">
+      <thead><tr><th>Metric</th><th>Budget</th><th class="hide-sm">Where</th></tr></thead>
+      <tbody>{budgets.map(([k, v, w]) => <tr><td>{k}</td><td>{v}</td><td class="muted hide-sm">{w}</td></tr>)}</tbody>
+    </table>
+  </section>
+  <NextDoor slug="suite" />
+</Base>

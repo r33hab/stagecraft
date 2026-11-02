@@ -5,7 +5,7 @@ mobile translation, cost. Pick one, or remix along the axes at the end. Two brie
 the same direction twice in a row; keep a note in `.stagecraft/log.json` (`{ "used": ["Monolith", ...] }`)
 and rotate.
 
-Every direction is calibrated on sites that juries rewarded in the last year. The common thread:
+Every direction is calibrated on public sites built to the highest standard. The common thread:
 one or two type families, near-black instead of pure black, one accent, a mono face for metadata,
 warm greys over cold ones, and a single signature moment that the rest of the page protects.
 
@@ -130,6 +130,14 @@ swaps are named by *style* so a brand licence can replace them without changing 
 **Layout.** A rounded "card" viewport for the scene on wide screens (so the page still has margins), corner `+` marks, a "scroll to explore" cue, labels in the margins.
 **Motion.** Camera on a scroll-bound spline, object rotates or disassembles on scroll, hover changes material; page transitions are a curtain that hides the scene swap.
 **Hero.** The scene, framed, with a short headline below the fold that arrives when the scene settles.
+**Only the subject.** Volume is for sites whose subject is a thing: a product, a device, a
+building, a car, a sculpture, a typeface shown as an object. The scene is that thing; the scroll
+turns it, opens it, explains it. A letter, a logo or an abstract shape is not a subject.
+**Without a model.** Source one: a CC0 scan of the same kind of object, or a model the client
+exports (`stack.md`, "Sourcing assets"). Scans carry what makes an object read as real (worn edges,
+material variation, true proportions); no lighting rescues geometry assembled from primitives,
+and extruded letters or a floating logo are ornaments, not a subject. If no model fits, change
+direction rather than fake one: film the work, or let a shader carry light and weather.
 **Mobile and low tier.** A looping poster video or a still of the same scene inside the same frame, same headline. The site must look designed, not degraded.
 **Cost.** High. WebGL chunk loads after first paint; tier-gated; DPR capped; see `performance.md`.
 **Avoid.** Shipping the scene before the headline, requiring WebGL to render any text, infinite loaders.

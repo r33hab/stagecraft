@@ -1,0 +1,143 @@
+{
+  "method": "Same brief, same constraints (static files, relative URLs, no photography), same test suite. The left column was built with the skill. The right column was built by a smaller model from the brief alone, with no skill and no extra guidance. Numbers come from the suite's mobile-low project: a 412 px Android profile with a 4x CPU slowdown and slow 4G, run against the published files. The skill column carries more script because it does far more (a live render of a real camera that turns into its own drawing, a lap that draws itself, live previews that follow the cursor); the point is that it stays inside the budgets on that phone while doing it, and passes the checks the other column fails.",
+  "demos": [
+    {
+      "id": "nordlys",
+      "title": "Nordlys GP",
+      "kind": "Season launch for a fictional Formula 1 team",
+      "skill": {
+        "path": "demos/nordlys/",
+        "shot": "nordlys-skill",
+        "signature": "Scroll the lap: a hand-drawn circuit draws itself, then a marker drives it while sector times, speed and gear read out live. Chapters shift between ink and paper; the calendar rail draws as you pass 24 rounds.",
+        "metrics": {
+          "lcpMs": 572,
+          "cls": 0,
+          "scriptKb": 66,
+          "totalKb": 170,
+          "frameP95": 16.7,
+          "fontFamilies": 3,
+          "axeSerious": 0,
+          "testsPassed": "68 / 68",
+          "reducedMotion": true,
+          "budgets": true,
+          "cursorTouch": false,
+          "thirdParty": 0
+        }
+      },
+      "baseline": {
+        "path": "demos/nordlys-baseline/",
+        "shot": "nordlys-base",
+        "signature": "A canvas aurora behind the tagline, a countdown, driver cards, a bar chart of results, an SVG circuit with an animated dot.",
+        "metrics": {
+          "lcpMs": 504,
+          "cls": 0,
+          "scriptKb": 2,
+          "totalKb": 24,
+          "frameP95": 16.8,
+          "fontFamilies": 2,
+          "axeSerious": 1,
+          "testsPassed": "64 / 68",
+          "reducedMotion": true,
+          "budgets": true,
+          "cursorTouch": false,
+          "thirdParty": 0
+        }
+      }
+    },
+    {
+      "id": "portfolio",
+      "title": "Mira Solberg",
+      "kind": "Portfolio for a fictional design engineer",
+      "skill": {
+        "path": "demos/portfolio/",
+        "shot": "portfolio-skill",
+        "signature": "An index you can read in ten seconds. Hovering a row summons a code-drawn miniature of that interface that follows the cursor; LIST and GRID re-lay the same rows with a FLIP transition; the Ledger case study ships a working miniature of the timeline it describes.",
+        "metrics": {
+          "lcpMs": 568,
+          "cls": 0,
+          "scriptKb": 65,
+          "totalKb": 179,
+          "frameP95": 16.8,
+          "fontFamilies": 3,
+          "axeSerious": 0,
+          "testsPassed": "68 / 68",
+          "reducedMotion": true,
+          "budgets": true,
+          "cursorTouch": false,
+          "thirdParty": 0
+        }
+      },
+      "baseline": {
+        "path": "demos/portfolio-baseline/",
+        "shot": "portfolio-base",
+        "signature": "A serif name, the statement, a work list with SVG thumbnails on hover, a case study with a small timeline demo.",
+        "metrics": {
+          "lcpMs": 504,
+          "cls": 0.026,
+          "scriptKb": 3,
+          "totalKb": 16,
+          "frameP95": 16.7,
+          "fontFamilies": 3,
+          "axeSerious": 1,
+          "testsPassed": "55 / 68",
+          "reducedMotion": true,
+          "budgets": true,
+          "cursorTouch": false,
+          "thirdParty": 0
+        }
+      }
+    },
+    {
+      "id": "story",
+      "title": "Halde 8",
+      "kind": "Story of a fictional 1958 cine camera, restored by hand",
+      "skill": {
+        "path": "demos/story/",
+        "shot": "story-skill",
+        "signature": "The camera itself carries the story: a live render of the real model moves to a new shot for each chapter, labels pin to the lenses and the key, for \"Taken apart\" the lit camera comes apart into its 39 parts and wipes into an exploded drawing of them, \"Rebuilt\" puts it back together and wipes it back to the light, and the ending turns the camera round and opens the page out of its eyepiece. Phones and reduced motion get a still of every shot.",
+        "metrics": {
+          "lcpMs": 1480,
+          "cls": 0,
+          "scriptKb": 52,
+          "totalKb": 246,
+          "frameP95": 16.7,
+          "fontFamilies": 3,
+          "axeSerious": 0,
+          "testsPassed": "34 / 34",
+          "reducedMotion": true,
+          "budgets": true,
+          "cursorTouch": false,
+          "thirdParty": 0
+        }
+      },
+      "baseline": {
+        "path": "demos/story-baseline/",
+        "shot": "story-base",
+        "signature": "A fixed three.js canvas with the same model and light, a camera pose per chapter, the turret disc rotating, an exploded view, a winding dial, a film-leader loader and grain.",
+        "metrics": {
+          "lcpMs": 3856,
+          "cls": 0,
+          "scriptKb": 48,
+          "totalKb": 328,
+          "frameP95": 16.7,
+          "fontFamilies": 3,
+          "axeSerious": 0,
+          "testsPassed": "25 / 34",
+          "reducedMotion": true,
+          "budgets": true,
+          "cursorTouch": false,
+          "thirdParty": 0
+        }
+      }
+    }
+  ],
+  "metricLabels": {
+    "testsPassed": "Suite checks passed",
+    "axeSerious": "Serious accessibility violations",
+    "budgets": "Inside every performance budget",
+    "cls": "Layout shift after a full scroll",
+    "frameP95": "Scroll frame p95 on a 4x throttled phone",
+    "lcpMs": "Largest paint on slow 4G",
+    "reducedMotion": "Reduced motion respected"
+  }
+}

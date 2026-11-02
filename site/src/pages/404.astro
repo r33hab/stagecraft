@@ -1,0 +1,13 @@
+---
+import Base from '../layouts/Base.astro';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<Base title="stagecraft · not found" description="That page does not exist. Back to the skill.">
+  <section class="hero chapter" aria-labelledby="nf-title">
+    <div>
+      <p class="label">Error 404</p>
+      <h1 class="hero__title" id="nf-title">Nothing here. Back to the start.</h1>
+      <div class="hero__actions"><a class="pill" href={`${base}/`}>Home</a></div>
+    </div>
+  </section>
+</Base>

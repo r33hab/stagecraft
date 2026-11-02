@@ -5,3 +5,16 @@ playwright-report/
 test-results/
 .DS_Store
 .lighthouseci/
+**/node_modules/
+**/dist/
+**/.astro/
+**/test-results/
+**/playwright-report/
+*.log
+**/.lighthouseci/
+**/*-snapshots/
+**/.reel-tmp/
+**/.video-tmp/
+**/*.frames/
+**/node_modules
+**/__screenshots__/

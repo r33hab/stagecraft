@@ -6,17 +6,16 @@ version: 1.0.0
 
 # Stagecraft
 
-A skill for building the kind of website juries reward: one idea, directed motion, a static frame
-that already looks made on purpose, and a page that holds 60 fps on a cheap phone. It encodes what
-roughly a hundred award-winning and honourably-mentioned sites actually do (read from their source
-and watched in a browser), the budgets that separate the lean winners from the heavy ones, and a
-test suite that turns the jury's checklist into assertions.
+A skill for building websites with one idea, directed motion, a static frame that already looks
+made on purpose, and a page that holds 60 fps on a cheap phone. It carries a point of view on art
+direction, choreography and performance, budgets that keep a site lean, and a test suite that
+turns a reviewer's checklist into assertions.
 
-The bar, in the jury's own weighting: **design 40 %, usability 30 %, creativity 20 %, content 10 %**.
-Newcomers over-index on creativity (a WebGL gimmick) and lose the 70 % that is design plus
-usability. The three things that separate a 6.5 from a 9 are art direction (take the motion away and
-the frames still look designed), choreography (motion has a director, not just a library) and
-performance on real devices. Miss one and the site caps in the mid 7s.
+The bar: design and usability count for far more than novelty. Newcomers over-index on creativity
+(a WebGL gimmick) and lose on the fundamentals. The three things that separate a good site from a
+remarkable one are art direction (take the motion away and the frames still look designed),
+choreography (motion has a director, not just a library) and performance on real devices. Miss one
+and the site reads as ordinary.
 
 ## Verbs
 
@@ -31,25 +30,56 @@ performance on real devices. Miss one and the site caps in the mid 7s.
 
 ### 0. Read before asking
 Collect the silent facts (name, one-line what, audience, brand assets, content on hand, existing
-codebase, languages) from the brief and the repo. Then ask at most four questions from
-`references/intake.md` with `AskUserQuestion`: purpose, who edits, how far the motion goes, and a
-feel. Never ask about frameworks or libraries; the answers decide the stack and you state it in one
-plain sentence. If the person says "just build it", take the recommended defaults and say so.
+codebase, languages) from the brief and the repo. Then ask what the brief leaves open from
+`references/intake.md` with `AskUserQuestion`, in rounds of at most four: purpose, who edits, how
+far the motion goes, a feel, and for an ambitious brief or one with several subjects, what is the
+one thing worth showing (Q5), how people should move through it (Q6: one scroll, a landing that
+routes into pages, chapters as pages) and what material exists (Q7: photography or illustration, the
+product or a model of it, footage or the work itself, or nothing yet). Ask where people will mostly
+see it (Q8: on a computer, everywhere about equally, mostly on phones) whenever the brief does not say:
+it decides which device gets the full experience and which budgets fail the build. Never ask about frameworks or libraries; the answers
+decide the stack and you state it in one plain sentence. If the person says "just build it", take
+the recommended defaults, choose the signature and the page map yourself, and say so.
 
-### 1. Concept, direction, signature moment
-Write three lines before any code and keep them in `docs/concept.md`:
-- **Concept**: one sentence ("a portfolio that reads like a printed monograph", "a product page that
-  is a day of ownership").
+### 1. Concept, carrier, direction, signature moment
+Write four lines before any code and keep them in `docs/concept.md`:
+- **Concept**: one sentence about the subject, in the subject's own terms ("a portfolio that reads
+  like a printed monograph", "a product page that is a day of ownership"). It comes from what the
+  subject is and does: its material, its users, its moment. A sentence that would fit any other
+  product is a template.
+- **Carrier**: the one thing that stays on screen and carries every chapter (`references/craft.md`,
+  section 1): the product, a card cut in a brand shape, a frame that becomes a window, a portrait, a
+  drawn line, the wordmark, a readout. Chapters change the carrier; they do not replace the page.
 - **Direction**: one of the sixteen in `references/directions.md`, or a named remix from its axes.
   Rotate; never the same direction twice in a row (`.stagecraft/log.json`).
-- **Signature moment**: the one interaction people will screenshot. Everything else is smaller,
-  shorter and quieter to protect it.
+- **Signature moment**: the one interaction people will screenshot, chosen with Q5 of the intake. It
+  is built on the carrier and made of the subject (the thing itself, how it works, the body of work).
+  Everything else is smaller, shorter and quieter to protect it.
+
+**The floor for an ambitious brief.** When Q3 is Expressive or Cinematic, or the brief says wow,
+award, immersive or memorable, a page whose sections fade up one after another has not met the brief.
+Ship at least, with the numbers from `references/craft.md`:
+- a hook in the first three seconds: the subject moving, through a loader that is the first scene
+  (2 to 4 s, skipped on repeat) or no loader at all;
+- the carrier, mounted once, changed per chapter;
+- every chapter change made by a moving edge (frame zoom, rising slab, curtain, growing shape, brand
+  wipe), with overlap, and never a frame without content;
+- one text reveal family, every block held long enough to read (craft.md, section 3), copy leaving by
+  scrolling off or being covered;
+- one signature curve and one wipe curve for the whole site;
+- a designed ending where the carrier returns;
+- the low-tier and reduced-motion version of each.
+Real material carries the frames: photography, illustration, the product, footage or drawings of the
+work. Shapes built from primitives and abstract ornaments (a floating letter, a blob, a torus) are
+not material; leave them out.
 
 When the brief is open or the person asked for options, run the variations protocol in
 `directions.md` (three sketches, recommend one, build the pick).
 
-### 2. Stack
-From the intake table (`references/intake.md`, then `references/stack.md`): Astro for content sites,
+### 2. Page map and stack
+Q6 decides the page map before any chapter list (`references/ux.md`, "Page map"): a landing that
+routes into pages with shared-element transitions, one scroll, or chapters as pages. Then the stack
+from the intake table (`references/intake.md`, then `references/stack.md`): Astro for content sites,
 Vite + TypeScript for a single-scene page, Next.js or Nuxt only when the brief has app features or
 the codebase already uses them; GSAP + ScrollTrigger for choreography, Lenis on fine pointers only,
 `ogl` for one shader, `three` only for a real scene, loaded after first paint. Nothing from the
@@ -74,15 +104,20 @@ Alternate dense and air chapters. Write the real copy now (no lorem ipsum, no in
    design, not the motion.
 2. **Runtime tiering.** `assets/runtime/tier.ts` sets `html[data-tier]` before first paint; CSS and
    JS branch on it (`references/performance.md`).
-3. **Motion layer.** Reveals with `assets/runtime/reveal.ts` (never-stuck guarantee), then the
-   chapter transitions, then the signature moment. Recipes in `references/motion.md`. Reduce, do not
-   remove, under `prefers-reduced-motion`.
+3. **Motion layer.** The carrier first, then the chapter edges, then the text reveals
+   (`assets/runtime/reveal.ts`, never-stuck guarantee), then the signature moment. Numbers from
+   `references/craft.md`; moves from `references/choreography.md` (one signature, two or three
+   supporting); code in `references/motion.md`; a 3D object only from a real model, loaded by
+   `assets/runtime/hero-scene.ts` (sourcing in `references/stack.md`). Reduce, do not remove, under
+   `prefers-reduced-motion`.
 4. **Media.** AVIF/WebP with sizes, posters before video, scenes and sequences as lazy chunks
-   behind the tier check, the hero headline rendered in HTML as the LCP element.
+   behind the tier check, the hero headline rendered in HTML as the LCP element. When the subject
+   is a site, an app or a product UI, film it with `scripts/film.mjs` (seamless loops, two sizes,
+   a poster) instead of faking it in a mock-up.
 5. **Chrome.** Visible nav, skip link, focus ring, 404 page, meta and share image, consent off the
    hero (`references/ux.md`).
 
-Rules that hold in every direction (each one was a real flaw on a studied winner):
+Rules that hold in every direction (each one is a flaw seen often on high-end sites):
 - Custom cursor and magnetic effects only on `(hover: hover) and (pointer: fine)`.
 - `100svh` heroes; nothing important in the bottom 80 px on phones.
 - Animate `transform`, `opacity`, `clip-path` and registered custom properties only; no `filter`
@@ -109,9 +144,28 @@ only with a reason in the commit. Run against the production build.
 
 ### 7. Critique, then deliver
 Score the six axes in `references/critique.md` (concept, static frame, choreography, craft,
-performance, usability), 1 to 5; anything under 3 gets another pass. Do the juror test for real:
+performance, usability), 1 to 5; anything under 3 gets another pass. Do the review pass for real:
 look at the two static hero captures, read the perf table from `mobile-low`, run the reduced-motion
-project, tab through the page. Check the anti-pattern list. Then deliver with:
+project, tab through the page. Then watch the motion the way a visitor meets it, for real:
+
+```bash
+node <skill>/scripts/frames.mjs http://localhost:4321/ --out .stagecraft/frames
+```
+
+It scrolls at a steady reading pace, records every frame, and writes contact sheets, a timeline of
+when each block of copy becomes readable and how long it holds, and a verdict. Open every sheet, and
+open single frames at full size on both sides of each chapter change. Each question is a blocker:
+1. Is every piece of copy readable long enough? (verdict clean; `reading.spec.ts` green)
+2. Does any chapter change cut, fade to an empty colour, or stack copy on copy? (a moving edge with
+   overlap, `craft.md` section 2)
+3. Is the carrier on screen through the chapters, or does the page restart each section?
+4. Does every frame show the subject's material (the product, the work, people, drawings of how it
+   works), or only type and boxes?
+5. Is every big move about the subject? An object that is not the product, the place, the mechanism
+   or the work is an ornament: cut it.
+Compare the sheets with the hook and transitions you planned in `docs/concept.md`; say plainly where
+the result falls short.
+Fix, re-capture, then check the anti-pattern list and deliver with:
 
 ```
 Concept: <one sentence>  Direction: <name>  Signature: <moment>
@@ -128,20 +182,24 @@ Open: <placeholders to fill, assets to supply, anything skipped and why>
 |---|---|
 | the questions, defaults and the answer-to-stack tables | `references/intake.md` |
 | the sixteen directions, remix axes, variations protocol | `references/directions.md` |
+| the numbers: carrier, chapter edges, text reveal and hold, pins, horizontal, loader, easing, 2D/3D craft, pointer, page transitions, pace | `references/craft.md` |
 | the arc, chapter types, transitions, gates, endings | `references/story.md` |
 | tokens, two layers, reduced motion, never-stuck, recipes with code | `references/motion.md` |
-| budgets, tiers, LCP path, mobile pitfalls, 3D rules, how winners weigh | `references/performance.md` |
+| the moves: horizontal handoff, frame to full bleed, stage swaps, camera dolly, disassembly, logo as window, pre-rendered video objects | `references/choreography.md` |
+| budgets, tiers, LCP path, mobile pitfalls, 3D rules, lean versus heavy | `references/performance.md` |
 | pairings, fluid scale, loading | `references/typography.md` |
-| token model, palettes from winners, contrast, chapter-shift | `references/color.md` |
+| token model, palettes, contrast, chapter-shift | `references/color.md` |
 | navigation, keyboard, touch, forms, consent, SEO, copy honesty | `references/ux.md` |
-| decision table, versions, do-not-use list, wiring per framework | `references/stack.md` |
+| decision table, versions, do-not-use list, wiring per framework, sourcing models and textures, filming the work | `references/stack.md` |
 | the suite: projects, specs, budgets file, reading failures, CI | `references/testing.md` |
-| rubric, juror test, anti-patterns, most frequent fixes | `references/critique.md` |
-| twenty studied winners: what you see and how it is built | `references/field-notes.md` |
+| rubric, review pass, anti-patterns, most frequent fixes | `references/critique.md` |
+| field notes: techniques seen on public sites, what you see and how it is built | `references/field-notes.md` |
 
 Runtime helpers to copy into a project: `assets/runtime/` (`tier.ts`, `reveal.ts`,
-`lenis-gsap.ts`, `motion.css`). Test suite: `assets/tests/`. Scripts: `scripts/add-tests.mjs`,
-`scripts/check-budgets.mjs`.
+`lenis-gsap.ts`, `motion.css`, and `hero-scene.ts` for a real GLB). Test suite: `assets/tests/`.
+Scripts: `scripts/add-tests.mjs`, `scripts/check-budgets.mjs`, `scripts/frames.mjs` (watch a page
+frame by frame and judge its reading pace), `scripts/film.mjs` (film a page as a video loop),
+`scripts/explode-gltf.mjs` (split a model into parts for an exploded view).
 
 ## Audit flow (`stagecraft audit`)
 
@@ -161,5 +219,5 @@ Runtime helpers to copy into a project: `assets/runtime/` (`tier.ts`, `reveal.ts
   tokens additively and gate new behaviour on new markup. State the files you will touch first.
 - Never fabricate metrics, clients, logos, quotes or awards.
 - Reference material (brand PDFs, decks, transcripts) is source, not copy to paste verbatim.
-- Public sites named in `field-notes.md` are studied for technique; never copy their assets, copy
+- Public sites named in `field-notes.md` are references for technique; never copy their assets, copy
   or layouts one to one.

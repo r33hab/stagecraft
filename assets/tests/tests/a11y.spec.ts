@@ -37,10 +37,8 @@ for (const route of routes) {
     const seen: string[] = [];
     let skipLinkWorked: boolean | null = null;
 
-    for (let i = 0; i < steps; i++) {
-      await page.keyboard.press('Tab');
-      await page.waitForTimeout(40);
-      const f = await page.evaluate(() => {
+    const readFocus = () =>
+      page.evaluate(() => {
         const el = document.activeElement as HTMLElement | null;
         if (!el || el === document.body) return null;
         const r = el.getBoundingClientRect();
@@ -55,6 +53,13 @@ for (const route of routes) {
         const href = el.getAttribute('href') || '';
         return { label, inView, visible: cs.visibility !== 'hidden' && opacity > 0.5 && r.width > 0 && r.height > 0, ring, href, isSkip: /skip/i.test(label) && href.startsWith('#') };
       });
+
+    for (let i = 0; i < steps; i++) {
+      await page.keyboard.press('Tab');
+      await page.waitForTimeout(40);
+      let f = await readFocus();
+      // A focused element may still be revealing or scrolling into view; give it a moment before judging.
+      if (f && (!f.inView || !f.visible)) { await page.waitForTimeout(800); f = await readFocus(); }
       if (!f) continue;
       seen.push(f.label);
       if (!f.inView || !f.visible) invisible.push(f.label);
@@ -80,7 +85,7 @@ for (const route of routes) {
     await page.goto(route, { waitUntil: 'load' });
     await settle(page);
     const btn = page.locator(cfg.selectors.menuButton).first();
-    test.skip((await btn.count()) === 0, 'no menu button marked with the configured selector');
+    test.skip((await btn.count()) === 0 || !(await btn.isVisible()), 'no visible menu button marked with the configured selector at this viewport');
     await btn.focus();
     await page.keyboard.press('Enter');
     await page.waitForTimeout(500);

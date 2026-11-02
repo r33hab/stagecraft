@@ -1,0 +1,10 @@
+---
+interface Props { n: string; slug: string; name: string; title: string; lede: string }
+const { n, slug, name, title, lede } = Astro.props;
+---
+<header class="page-head chapter">
+  <div class="chapter__head"><span>{n} · {name}</span></div>
+  <h1 class="page-head__name" id="page-title" tabindex="-1" transition:name={`door-${slug}`}>{name}</h1>
+  <p class="page-head__title" data-reveal>{title}</p>
+  <p class="lede" data-reveal>{lede}</p>
+</header>

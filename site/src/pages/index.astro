@@ -1,0 +1,202 @@
+---
+import Base from '../layouts/Base.astro';
+import { repo, questions, doors, version, directions, reel } from '../data/site';
+import compare from '../data/compare.json';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const story = compare.demos.find((d) => d.id === 'story')!.skill.metrics;
+const drives = ['drives the story shape and the end action', 'drives the stack: static files, a CMS, or their codebase', 'drives the tier ladder and the budget', 'three or four directions in plain words, or three sketches to pick from', 'decides which device gets the full version and which budgets fail the build'];
+---
+<Base title="stagecraft · a Claude Code skill" description="stagecraft is a Claude Code skill that directs and builds animated, scroll-driven websites and tests them like software: performance, accessibility, motion and reading time, in five browsers." slug="home">
+  <div class="journey" data-journey>
+  <div class="journey__stage" data-journey-stage data-stage>
+  <section class="hero chapter" aria-labelledby="hero-title" data-journey-hero>
+    <div class="hero__grid" aria-hidden="true"></div>
+    <div class="hero__copy" data-journey-copy>
+      <p class="label" data-reveal>A Claude Code skill · v{version}</p>
+      <h1 class="hero__title" id="hero-title" data-reveal data-reveal-group>
+        <span class="line"><span class="line__inner">Directed</span></span>
+        <span class="line"><span class="line__inner">websites,</span></span>
+        <span class="line"><span class="line__inner">tested like</span></span>
+        <span class="line"><span class="line__inner">software.</span></span>
+      </h1>
+      <p class="lede" data-reveal style="margin-top:1.25rem">A brief goes in; a directed, tested site comes out. Plain questions, sixteen directions, twenty-one choreographed moves with real numbers, budgets, and a Playwright suite that watches the page the way a visitor reads it.</p>
+      <div class="hero__actions" data-reveal>
+        <a class="pill" href="#install">Install</a>
+        <a class="pill pill--ghost" href={repo} rel="noopener">View on GitHub</a>
+      </div>
+    </div>
+
+    <div class="build" data-build data-dynamic aria-hidden="true">
+      <div class="build__slot" data-build-slot>
+      <div class="build__frame" data-build-frame data-pv="night" data-dynamic aria-hidden="true">
+        <div class="build__scene" data-build-scene>
+        <div class="build__page bn" data-build-page>
+          <div class="bn__sky" aria-hidden="true"><i class="bn__studio" data-bn-studio></i><img class="bn__poster" src={`${base}/kino/poster.jpg`} alt="" width="1500" height="1200" loading="lazy" decoding="async" /><canvas class="bn__world" data-bn-world data-src={base}></canvas><i class="bn__edge" data-bn-edge></i></div>
+          <div class="bn__top" data-build-block><span class="bn__brand">Halde 8</span><span class="bn__times">{['Story', 'Turret', 'Film', 'Order'].map((t) => <span>{t}</span>)}</span></div>
+          <div class="bn__hud" data-build-block><span>Model 1958 · 8 mm</span><span class="bn__clock" data-bn-clock>FT 00</span></div>
+          <div class="bn__copy" data-build-block>
+            <p class="bn__title"><span class="bp__bars" data-build-bars><i></i></span><span class="bp__w bn__swap"><i data-build-word>Restored</i><i data-bn-next>Rolling</i></span></p>
+            <p class="bn__text"><span class="bp__bars bn__lines" data-bn-lines><i></i><i></i><i></i></span><span class="bn__t bn__swap"><span data-bn-text>A cine camera from 1958, taken apart and rebuilt by hand, one at a time.</span><span data-bn-next-text>Three lenses on a turret: wide, normal and tele. Wind it, turn to the shot, press.</span></span></p>
+          </div>
+          <ol class="bn__rail" data-build-block>{[0, 1, 2, 3, 4, 5].map((i) => <li data-bn-dot class={i === 0 ? 'is-on' : ''}></li>)}</ol>
+        </div>
+        <div class="build__brief" data-build-brief><span class="build__k">Brief</span><p>"The story of a restored 1958 cine camera, and a waiting list for the first twelve. Cinematic; most people will see it on a computer."</p></div>
+        <ul class="build__q" data-build-q><li>Story</li><li>A developer</li><li>Cinematic</li><li>Computer</li></ul>
+        <p class="build__console" data-build-console>{['smoke', 'responsive', 'a11y', 'motion', 'perf'].map((s) => <span data-build-tick>{s}</span>)}</p>
+        </div>
+        <div class="build__pv" data-build-pv>
+          <div class="pv pv--reel" data-reel>
+            {reel.map((r, i) => (
+              <figure class="reel__item" data-reel-item={i}>
+                <img src={`${base}/reel/${r.slug}.jpg`} alt="" loading="lazy" decoding="async" width="960" height="768" />
+                <video muted playsinline loop preload="none" data-film={`${base}/reel/${r.slug}`}></video>
+              </figure>
+            ))}
+          </div>
+          <div class="pv pv--method"><p class="pv__tag"><b>Method</b> <span data-pv-step>01 Brief</span></p></div>
+          <div class="pv pv--directions">
+            <div class="ring" data-ring>{directions.map((d, i) => (
+              <div class="ring__card" style={`--i:${i};--c-bg:${d.bg};--c-fg:${d.fg};--c-ac:${d.accent}`}>
+                <span class="ring__n">{String(i + 1).padStart(2, '0')} / 16</span>
+                <b class="ring__name">{d.name}</b>
+                <p class="ring__s" data-face={d.face} data-caps={String(d.caps)} style={`font-weight:${d.weight}`}>{d.sample}</p>
+                <span class="ring__sw"><i></i><i></i><i></i></span>
+              </div>
+            ))}</div>
+            <p class="pv__tag"><b>Directions</b> Sixteen recipes, each with its own type, colour and motion</p>
+          </div>
+          <div class="pv pv--suite">
+            <i class="suite__scan"></i>
+            <span class="suite__box" data-suite-box=".bn__title"><em>Title · held 1.57 vp</em></span>
+            <span class="suite__box" data-suite-box=".bn__text"><em>Copy · held 1.57 vp</em></span>
+            <span class="suite__box" data-suite-box=".bn__clock"><em>CLS {story.cls}</em></span>
+            <p class="suite__bar">{['chromium', 'webkit', 'firefox', 'mobile-low', 'reduced', `axe ${story.axeSerious} serious`].map((b) => <span>{b}</span>)}<b>{story.testsPassed.replace(/ /g, '')}</b></p>
+            <p class="suite__meta">LCP {(story.lcpMs / 1000).toFixed(1)} s on a throttled phone · frame p95 {story.frameP95} ms</p>
+          </div>
+          <div class="pv pv--compare" data-cmp>
+            <p class="cmpv__title" data-cmp-title>One Night of Light</p>
+            {['skill', 'base'].map((arm) => (
+              <figure class={`cmpv__arm cmpv__arm--${arm}`}>
+                <video muted playsinline loop preload="none" data-cmp-film={arm}></video>
+                <figcaption>{arm === 'skill' ? 'With stagecraft' : 'Without'}</figcaption>
+                <dl class="cmpv__m" data-cmp-m={arm}></dl>
+              </figure>
+            ))}
+            <p class="pv__tag"><b>Compare</b> One brief, built twice, measured by the same suite</p>
+            <script type="application/json" data-cmp-data set:html={JSON.stringify(reel.map((r) => { const d = compare.demos.find((x) => x.id === r.slug)!; const m = (x: typeof d.skill.metrics) => [['Suite', x.testsPassed.replace(/ /g, '')], ['axe, serious', String(x.axeSerious)], ['LCP, slow phone', `${(x.lcpMs / 1000).toFixed(1)} s`], ['Reduced motion', x.reducedMotion ? 'handled' : 'ignored']]; return { skill: m(d.skill.metrics), base: m(d.baseline.metrics) }; }))}></script>
+          </div>
+        </div>
+      </div>
+      </div>
+      <ol class="build__steps" data-build-steps data-dynamic><li>Brief</li><li>Intake</li><li>Static frame</li><li>Tokens</li><li>Choreography</li><li>Tests</li></ol>
+    </div>
+    <p class="scroll-cue label" aria-hidden="true">Scroll</p>
+  </section>
+
+  <p class="dive-cap" data-dive-cap><span class="label">Into the page</span><span class="dive-cap__t">Every site starts with a few plain questions.</span></p>
+
+  <section class="jq hz" id="intake" data-theme="ink" aria-labelledby="intake-title" data-journey-q>
+    <div class="hz__track" data-hz-track>
+      <article class="hz__panel hz__panel--intro">
+        <div class="hz__body hz__body--wide">
+          <div class="chapter__head"><span>01 · Intake</span></div>
+          <h2 class="h2" id="intake-title">Questions nobody can answer wrong</h2>
+          <p class="lede">The person answering is usually not a front-end engineer, so the questions ask about the situation, never about tools. The answers decide the framework, the direction shortlist, the motion ceiling, the signature moment and the page map.</p>
+        </div>
+      </article>
+      {questions.map((q, i) => (
+        <article class="hz__panel" data-allow-hidden>
+          <span class="hz__n" aria-hidden="true">0{i + 1}</span>
+          <div class="hz__body">
+            <h3 class="hz__q">{q.q}</h3>
+            <ul class="q__list">{q.a.map((a) => <li>{a}</li>)}</ul>
+            <p class="label">{drives[i]}</p>
+          </div>
+        </article>
+      ))}
+      <article class="hz__panel hz__panel--end" data-theme="paper" data-allow-hidden>
+        <span class="hz__n" aria-hidden="true">→</span>
+        <div class="hz__body">
+          <h3 class="hz__q">Then the skill says the stack in one sentence.</h3>
+          <p class="label">"I'll build this as a static site with a content folder you edit as Markdown; it is the fastest option for phones and the simplest to host."</p>
+        </div>
+      </article>
+    </div>
+    <p class="hz__rail label" aria-hidden="true"><span data-hz-progress>01</span> / 0{questions.length}</p>
+  </section>
+
+  <section class="jd chapter doors" id="inside" aria-labelledby="doors-title" data-journey-doors>
+    <div class="jd__grid">
+      <div class="jd__copy">
+        <div class="chapter__head"><span>02 · Inside</span></div>
+        <h2 class="h2" id="doors-title">Go straight to what you came for</h2>
+        <p class="lede" style="margin-bottom:1.5rem">Four doors, each a page of its own: one click away rather than twenty screens down.</p>
+        <ul class="doors__list">
+          {doors.map((d, i) => (
+            <li>
+              <a class="door" href={`${base}/${d.slug}/`} data-door={d.slug}>
+                <span class="door__n">0{i + 1}</span>
+                <span class="door__name" transition:name={`door-${d.slug}`}>{d.name}</span>
+                <span class="door__promise">{d.promise}</span>
+                <span class="door__meta">{d.meta}</span>
+                <span class="door__arrow" aria-hidden="true">→</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div class="jd__show">
+        <div class="jd__deck" aria-hidden="true"><div class="jd__slot" data-dock-slot></div></div>
+        <div class="ex">
+          <p class="label ex__k">Sites it built · same suite, same budgets</p>
+          <ol class="ex__list">
+            {reel.map((r, i) => (
+              <li class="ex__item" data-reel-go={i}>
+                <a href={`${base}/${r.path}`} data-astro-reload data-astro-prefetch="false"><img class="ex__thumb" data-thumb={`${base}/reel/${r.slug}-card.jpg`} alt="" width="960" height="768" /><span class="ex__n">0{i + 1}</span><span class="ex__name">{r.title}</span><span class="ex__kind">{r.kind}</span><span class="ex__arrow" aria-hidden="true">↗</span></a>
+                <i class="ex__bar" aria-hidden="true"><b></b></i>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+  </div>
+  </div>
+
+  <div class="strip marquee" data-dynamic>
+    <button class="marquee-pause" type="button" aria-pressed="false" data-marquee-pause>Pause</button>
+    <div class="marquee__track" aria-hidden="true">{[0, 1].map(() => ['Intake', 'Concept', 'Page map', 'Stack', 'Tokens', 'Story', 'Static frame', 'Motion', 'Tiering', 'Tests', 'Critique'].map((s) => <span>{s}</span>))}</div>
+    <span class="sr-only">The flow: intake, concept, page map, stack, tokens, story, static frame, motion, tiering, tests, critique.</span>
+  </div>
+
+  <section class="chapter" id="install" data-theme="ink" aria-labelledby="install-title">
+    <div class="ticks" aria-hidden="true"><i></i></div>
+    <div class="chapter__head"><span>03 · Install</span></div>
+    <div class="install">
+      <div>
+        <h2 class="h2" id="install-title" data-reveal>Two commands</h2>
+        <p class="lede" data-reveal>Clone into your skills folder, then ask for a site in plain words. The suite can also be dropped into an existing project on its own.</p>
+      </div>
+      <div data-reveal data-reveal-group>
+        <p class="label" style="margin-bottom:.5rem">Install the skill</p>
+        <pre tabindex="0"><code>git clone {repo} ~/.claude/skills/stagecraft</code></pre>
+        <p class="label" style="margin:1.25rem 0 .5rem">Add the suite to any project</p>
+        <pre tabindex="0"><code>node ~/.claude/skills/stagecraft/scripts/add-tests.mjs . \
+  --base http://localhost:4321 --preview "npm run preview" --routes "/,/work"
+npm i -D @playwright/test @axe-core/playwright
+npx playwright install chromium firefox webkit
+npm run build &amp;&amp; npm run test:budgets &amp;&amp; npm run test:e2e</code></pre>
+        <p class="label" style="margin:1.25rem 0 .5rem">Then say</p>
+        <pre tabindex="0"><code>build me a launch page for …
+stagecraft variations 3
+stagecraft audit https://…
+stagecraft test</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="ending marquee" data-dynamic aria-hidden="true">
+    <div class="marquee__track">{[0, 1].map(() => [0, 1, 2].map(() => <><span class="ending__a">stagecraft</span><span class="ending__b">stagecraft</span></>))}</div>
+  </div>
+</Base>

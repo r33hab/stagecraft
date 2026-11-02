@@ -1,0 +1,135 @@
+---
+import Base from '../layouts/Base.astro';
+import Lap from '../components/Lap.astro';
+import { team, drivers, stats, car, calendar, nextRoundIndex, results, partners, posters } from '../data/season';
+const next = calendar[nextRoundIndex];
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<Base title="Nordlys GP · 2027 season" description="Nordlys GP, a Formula 1 team from Norway: the 2027 launch, the NX-27, drivers Sigrid Haugen and Teodor Vik, the full calendar and how to join the grid.">
+  <section class="hero chapter" data-theme="ink" aria-labelledby="hero-title">
+    <div class="hero__lines" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <p class="hero__num" aria-label="Car number 27" data-hero-num><small>Car</small><span data-scramble aria-hidden="true">27</span></p>
+    <div class="hero__grid">
+      <div>
+        <p class="label" data-reveal>{team.season} season launch</p>
+        <h1 class="display hero__title" id="hero-title" data-reveal data-reveal-group>
+          <span class="line"><span class="line__inner">We race</span></span>
+          <span class="line"><span class="line__inner">the dark.</span></span>
+        </h1>
+        <p class="lede" data-reveal style="margin-top:1.5rem">Two cars, one base north of Oslo, and a season that starts under the lights in Melbourne. This is {team.name}, year three.</p>
+        <div class="hero__meta" data-reveal>
+          <a class="pill" href="#join">Join the grid</a>
+          <span>Next race · {next[0]} · {next[2]} {team.season}</span>
+        </div>
+      </div>
+      <div class="hero__stats" data-reveal data-reveal-group>
+        {stats.map((s) => <div class="stat"><span class="stat__value mono" data-scramble aria-label={String(s.value)}>{s.value}</span><span class="stat__label">{s.label}</span></div>)}
+      </div>
+    </div>
+  </section>
+
+  <div class="strip marquee" data-dynamic>
+    <button class="marquee-pause" type="button" aria-pressed="false" data-marquee-pause>Pause</button>
+    <div class="marquee__track" aria-hidden="true">
+      {[0, 1].map(() => <><span><em>Next</em>{next[0]} · {next[1]}</span><span><em>Date</em>{next[2]} {team.season}</span><span><em>Car</em>{team.car}</span><span><em>Base</em>{team.base}</span></>)}
+    </div>
+    <span class="sr-only">Next race {next[0]}, {next[1]}, {next[2]} {team.season}. Car {team.car}. Base {team.base}.</span>
+  </div>
+
+  <Lap />
+
+  <section class="chapter" id="car" data-theme="ink" aria-labelledby="car-title">
+    <div class="ticks" aria-hidden="true"><i></i></div>
+    <div class="chapter__head"><span>02 · The car</span></div>
+    <div class="car">
+      <div>
+        <h2 class="display car__name" id="car-title" data-reveal>{team.car}</h2>
+        <p class="lede" data-reveal style="margin-top:1rem">Third car, first one designed entirely in-house. The aero team chased downforce at the rear and found it in the floor.</p>
+        <div class="livery" data-reveal aria-hidden="true"></div>
+        <div class="slot" style="margin-top:1rem" data-reveal>Photo slot · studio render of the NX-27, three-quarter front</div>
+      </div>
+      <dl class="spec" data-reveal data-reveal-group>
+        {car.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
+      </dl>
+    </div>
+  </section>
+
+  <section class="chapter" id="drivers" data-theme="paper" aria-labelledby="drivers-title">
+    <div class="chapter__head"><span>03 · Drivers</span></div>
+    <h2 class="display" id="drivers-title" style="font-size:var(--text-2xl);margin-bottom:1.5rem" data-reveal>Who drives</h2>
+    <div class="index" data-reveal data-reveal-group>
+      {drivers.map((d) => (
+        <a class="index__row" href={`${base}/team/#driver-${d.num}`}>
+          <span class="index__num" transition:name={`num-${d.num}`}>{d.num}</span>
+          <span><span class="index__name">{d.name}</span><span class="index__meta">{d.role} · {d.born}</span></span>
+          <span class="index__side">{d.starts} starts · {d.podiums} podiums</span>
+        </a>
+      ))}
+    </div>
+    <p style="margin-top:1.5rem" data-reveal><a class="pill pill--ghost" href={`${base}/team/`}>Full team</a></p>
+  </section>
+
+  <section class="chapter" id="calendar" data-theme="ink" aria-labelledby="calendar-title">
+    <div class="chapter__head"><span>04 · {team.season} calendar · 24 rounds</span></div>
+    <h2 class="display" id="calendar-title" style="font-size:var(--text-2xl);margin-bottom:1.5rem" data-reveal>Where we go</h2>
+    <div class="cal">
+      <div class="cal__rail" aria-hidden="true"><i data-rail></i></div>
+      <ol style="list-style:none;padding:0">
+        {calendar.map(([gp, city, date], i) => (
+          <li class:list={['round', { 'round--next': i === nextRoundIndex }]}>
+            <span class="round__n">R{String(i + 1).padStart(2, '0')}</span>
+            <span class="round__name">{gp}<small>{city}</small></span>
+            <span class="round__date">{date}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="chapter" id="results" data-theme="paper" aria-labelledby="results-title">
+    <div class="chapter__head"><span>05 · 2026 in numbers · last eight rounds</span></div>
+    <h2 class="display" id="results-title" style="font-size:var(--text-2xl);margin-bottom:1.5rem" data-reveal>How it went</h2>
+    <table class="table" data-reveal>
+      <thead><tr><th>Rd</th><th>Grand Prix</th><th class="num">Car 27</th><th class="num">Car 72</th><th class="num hide-sm">Points</th></tr></thead>
+      <tbody>
+        {results.map((r) => <tr><td>{r.round}</td><td>{r.gp}</td><td class="num"><span class="pos">P{r.p27}</span></td><td class="num"><span class="pos">P{r.p72}</span></td><td class="num hide-sm">{r.points}</td></tr>)}
+      </tbody>
+    </table>
+    <p class="label" style="margin-top:1rem" data-reveal>Constructors' championship 2026: P5, 212 points.</p>
+  </section>
+
+  <section class="chapter wall" id="wall" data-theme="ink" aria-label="Season posters">
+    <p class="wall__word" aria-hidden="true">Race week</p>
+    <div class="posters" data-reveal data-reveal-group>
+      {posters.map((p) => <div class={`poster poster--${p.tone}`} style={`--tilt:${p.tilt}deg`}><span class="poster__k">{p.k}</span><span class="poster__big">{p.big}</span><span class="poster__k">{team.name} · {team.season}</span></div>)}
+    </div>
+  </section>
+
+  <section class="chapter partners" data-theme="paper" aria-labelledby="partners-title">
+    <div class="chapter__head"><span>06 · Partners</span></div>
+    <h2 class="sr-only" id="partners-title">Partners</h2>
+    <div class="marquee" data-dynamic>
+      <button class="marquee-pause" type="button" aria-pressed="false" data-marquee-pause>Pause</button>
+      <div class="marquee__track" aria-hidden="true">{[0, 1].map(() => partners.map((p) => <span>{p}</span>))}</div>
+      <ul class="sr-only">{partners.map((p) => <li>{p}</li>)}</ul>
+    </div>
+  </section>
+
+  <section class="chapter" id="join" data-theme="ink" aria-labelledby="join-title">
+    <div class="ticks" aria-hidden="true"><i></i></div>
+    <div class="chapter__head"><span>07 · Join the grid</span></div>
+    <div class="join">
+      <div>
+        <h2 class="display join__title" id="join-title" data-reveal>Ride along</h2>
+        <p class="lede" data-reveal style="margin-top:1rem">Race-weekend briefings from the pit wall, before the broadcast tells you. One email a round, nothing in between.</p>
+      </div>
+      <form class="form" action="#join" method="get" data-signup data-astro-reload data-reveal>
+        <label for="email">Email</label>
+        <input id="email" type="email" autocomplete="email" required placeholder="you@example.com" />
+        <button class="pill" type="submit">Join the grid</button>
+        <p class="form__hint">24 emails a year. Unsubscribe in one tap.</p>
+            <p class="form__done" data-signup-done role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+</Base>

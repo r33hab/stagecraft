@@ -1,11 +1,18 @@
 # Story: how a scroll becomes a narrative
 
 Scroll is the timeline. The visitor controls the pace, the page supplies the beats. Sites that
-juries reward share a grammar: a gate, a statement, chapters with one idea each, transitions that
+of this calibre share a grammar: a gate, a statement, chapters with one idea each, transitions that
 are scroll-bound rather than click-bound, a climax, and an ending that is designed rather than a
 footer that happens. This file is that grammar with recipes.
 
 ## The arc
+
+The arc below is one page's. A site with several subjects gets a page map first (`ux.md`, "Page
+map"): the landing carries the signature and the doors, each door opens a page with its own arc.
+On an ambitious page the chapters are not sections stacked under each other; they are phases of
+one scene, carried by one object (`choreography.md`, move 21).
+
+
 
 | Beat | Length | Job | Typical content |
 |---|---|---|---|
