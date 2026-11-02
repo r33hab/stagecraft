@@ -1,0 +1,19 @@
+---
+import { doors } from '../data/site';
+interface Props { slug: string }
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const i = doors.findIndex((d) => d.slug === Astro.props.slug);
+const next = doors[(i + 1) % doors.length];
+---
+<section class="end chapter" aria-label="Next page">
+  <a class="end__next" href={`${base}/${next.slug}/`}>
+    <span class="end__k label">Next · 0{((i + 1) % doors.length) + 1}</span>
+    <span class="end__name" transition:name={`door-${next.slug}`}>{next.name}</span>
+    <span class="end__title">{next.title}</span>
+    <span class="end__arrow" aria-hidden="true">→</span>
+    <span class="end__line" aria-hidden="true"></span>
+  </a>
+  <ol class="end__rail" aria-label="All pages">
+    {doors.map((d, k) => <li><a href={`${base}/${d.slug}/`} aria-current={k === i ? 'page' : undefined}><span>0{k + 1}</span>{d.name}</a></li>)}
+  </ol>
+</section>

@@ -1,14 +1,44 @@
 # UX and accessibility floor
 
-Usability is 30 % of a jury score and the easiest 30 % to lose: a nav that hides, a scroll that
+Usability is the easiest score to lose: a nav that hides, a scroll that
 fights, a focus ring that vanishes under a custom cursor. Nothing here is optional, and most of it is
 checked by the test suite.
+
+## Page map
+
+One page carries one story. A landing that holds every topic as a chapter makes the visitor scroll
+through everything to reach the one thing they came for, and the stages that make a scroll feel
+directed (handoffs, dials, stacks) multiply its length. Decide the page map before the chapter list.
+
+- **The landing promises and routes.** The signature moment, the one claim, proof in a line, then
+  doors: one link panel per destination with a name, a one-line promise and a shared element (the
+  name) that carries into the page it opens. Install or buy stays on the landing.
+- **Pages deliver.** Each door opens a page with one subject and its own ending, the next door. A
+  visitor who only wants the comparison or the pricing lands on it in one click.
+- **The signal.** A page over 12 screens of scroll at 1440 × 900 (stages included), or a landing
+  with more than six chapters that each carry a heading, is usually a site squeezed into a page.
+  The suite prints `scroll length (screens)` and warns past 12 (set `scrollScreens` in the budgets
+  to make it fail); the decision is the person's, through Q6 of the intake.
+- **Transitions make it one site.** View transitions (Astro `ClientRouter`, Next `<ViewTransition>`,
+  or the cross-document `@view-transition` rule) with a shared-element morph from the door name to
+  the page title, scroll reset to the top, focus moved to the new heading, and Back returning to
+  the door rather than to the top of the landing.
+- **Examples and sub-sites flow with the main site.** When the site links out to demos, case
+  studies or separate apps on the same origin, give both sides the same cross-document view
+  transition (`@view-transition { navigation: auto; types: <name>; }`, styled under
+  `:active-view-transition-type(<name>)` so the site's own page transitions keep theirs) and give
+  every page on the far side a persistent way back to the exact place it was entered from. In a
+  client-routed site, mark those links for a full navigation (Astro: `data-astro-reload`).
+- **Nav is the index.** Every page in the nav with the current one marked (`aria-current="page"`),
+  an `id` on every chapter for deep links, and a footer that repeats the map.
 
 ## Navigation
 
 - The primary nav is visible on desktop (not behind an icon) unless the direction is Volume or
   Cinema, where a pill "Menu" button is acceptable and the menu opens as a full panel.
-- The logo links home; the current page is marked (`aria-current="page"`, and a dot or underline).
+- The logo links home; the current page is marked (`aria-current="page"`, and a dot or underline). On the
+  home page the logo scrolls back to the top: a client router sees the same URL and does nothing, and smooth
+  scroll keeps its position, so handle a link to the current page yourself (`assets/runtime/lenis-gsap.ts` does).
 - A skip link is the first focusable element and works with smooth scroll (moves focus and scrolls
   immediately). Its target (`<main>`) carries `tabindex="-1"` so browsers can focus it; the
   `lenis-gsap.ts` helper handles the jump with or without smooth scroll.
@@ -16,7 +46,7 @@ checked by the test suite.
   element (`scroll-padding-top` equals the header height).
 - Anchor navigation for chapters (progress rails, dots) uses real links.
 - Back and forward work after client-side transitions; scroll position restores on back.
-- The 404 page is designed (it is a tagged category on award galleries for a reason): same direction,
+- The 404 page is designed: same direction,
   one line, a way home.
 
 ## Keyboard and focus
@@ -25,7 +55,11 @@ checked by the test suite.
   included (the document stays scrollable, ScrollTrigger does not trap).
 - Visible focus: a 2 px ring in `--ring` with a 2 px offset, on `:focus-visible`, never removed; a
   custom cursor must not be the only hover affordance.
-- Escape closes menus and dialogs; focus returns to the opener.
+- Escape closes menus and dialogs; focus returns to the opener at once, before any exit animation.
+- A sticky stage that swaps chapters keeps every chapter in the accessibility tree: hide the
+  inactive ones with opacity, never `visibility: hidden` or `display: none`, make them inert to the
+  pointer, and scroll the stage to a chapter when focus lands inside it. A stage that hides its
+  doors until you scroll to them hides the main navigation from screen readers.
 - Draggable things (carousels, cards) have buttons too (WCAG 2.5.7).
 - Space, PageDown, arrows and End scroll the page; no scroll hijack. Snap only on Poster desktop.
 
@@ -81,7 +115,7 @@ checked by the test suite.
 
 Never invent metrics, clients, logos, testimonials or awards. Use `[copy to confirm]` placeholders,
 a labelled grey block for a missing logo, and a different section type if there is no proof to show.
-A fabricated "trusted by 50,000 teams" is the fastest way to lose a client's trust and a jury's.
+A fabricated "trusted by 50,000 teams" is the fastest way to lose a client's trust.
 
 ## Internationalisation
 

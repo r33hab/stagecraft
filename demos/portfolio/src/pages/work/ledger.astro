@@ -1,0 +1,51 @@
+---
+import Base from '../../layouts/Base.astro';
+import Preview from '../../components/Preview.astro';
+import { work, ledger } from '../../data/work';
+const p = work[0];
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const cat: Record<string, string> = { Food: '#c98a2e', Transport: '#2f6bff', Income: '#1f7a4d', Groceries: '#2a9d8f', Subscriptions: '#8a5cf6', Culture: '#e4572e', Outdoor: '#2a9d8f', Housing: '#15161a', Hardware: '#b8432f' };
+---
+<Base title="Ledger · Mira Solberg" description="Ledger case study: a transaction timeline for a fintech that reads like a receipt and scrolls like one, with a working miniature of the timeline.">
+  <section class="case__head">
+    <p class="case__num" transition:name={`num-${p.n}`}>{p.n}</p>
+    <div>
+      <a class="back" href={`${base}/#work`}>← All work</a>
+      <h1 class="case__title" data-reveal>{p.title}</h1>
+      <p class="case__meta label" data-reveal><span>{p.client}</span><span>{p.year}</span><span>{p.role}</span></p>
+    </div>
+  </section>
+  <section class="chapter" style="padding-top:1rem" aria-label="Case study">
+    <p class="statement__text" style="font-size:var(--text-2xl);max-width:28ch;margin-bottom:2.5rem" data-reveal>{p.line}</p>
+    <div class="case__grid" data-reveal data-reveal-group>
+      <div><h3>Problem</h3><p>{ledger.problem}</p></div>
+      <div><h3>Role</h3><p>{ledger.role}</p></div>
+      <div><h3>Craft</h3><p>{ledger.craft}</p></div>
+      <div><h3>Outcome</h3><p>{ledger.outcome}</p></div>
+    </div>
+  </section>
+  <section class="chapter" data-theme="ink" aria-labelledby="demo-title" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:2rem;align-items:start">
+    <div>
+      <div class="chapter__head"><span>The timeline, reduced</span></div>
+      <h2 id="demo-title" class="row__title" style="font-size:var(--text-2xl)" data-reveal>Try it: type to filter, arrow keys to move.</h2>
+      <p data-reveal style="margin-top:1rem;max-width:40ch;color:var(--fg-muted)">Grouped by day, sticky date rail, tabular figures, category as a thin edge, no layout shift when filtering.</p>
+      <div style="max-width:14rem;margin-top:2rem" data-reveal><Preview kind={p.kind} accent={p.accent} title={p.title} /></div>
+    </div>
+    <div class="ledger" data-ledger data-reveal>
+      <div class="ledger__bar">
+        <label class="sr-only" for="q">Filter transactions</label>
+        <input id="q" type="search" placeholder="Filter, e.g. groceries" autocomplete="off" data-ledger-q />
+        <span class="ledger__hint">↑ ↓ to move</span>
+      </div>
+      {ledger.rows.map((d) => (
+        <div class="ledger__day" data-day>
+          <div class="ledger__date">{d.day}</div>
+          <ul class="ledger__rows">
+            {d.items.map(([name, c, amt]) => <li class="ledger__row" tabindex="0" data-text={`${name} ${c}`.toLowerCase()} style={`--cat:${cat[c] || 'var(--line)'}`}><span>{name}<small>{c}</small></span><span class:list={['ledger__amt', { 'is-in': amt.startsWith('+') }]}>{amt}</span></li>)}
+          </ul>
+        </div>
+      ))}
+      <p class="ledger__empty" data-ledger-empty hidden>Nothing matches. Try a category or a name.</p>
+    </div>
+  </section>
+</Base>

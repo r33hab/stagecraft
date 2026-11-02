@@ -1,0 +1,28 @@
+---
+import { team } from '../data/season';
+const year = new Date().getFullYear();
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<footer class="foot" id="contact">
+  <p class="foot__statement" data-reveal>We race<br />the <span>dark.</span></p>
+  <div class="foot__grid">
+    <div>
+      <p class="label">Team</p>
+      <a href={`${base}/#lap`}>The lap</a><a href={`${base}/#car`}>The car</a><a href={`${base}/team/`}>Drivers and staff</a><a href={`${base}/#calendar`}>Calendar</a>
+    </div>
+    <div>
+      <p class="label">Follow</p>
+      <a role="link" aria-disabled="true" title="The team is fictional">Instagram</a><a role="link" aria-disabled="true" title="The team is fictional">YouTube</a><a href={`${base}/#join`}>Newsletter</a>
+    </div>
+    <div>
+      <p class="label">Base</p>
+      <p>{team.base}<br />Est. {team.founded}</p>
+      <p style="margin-top:.8rem"><a href="mailto:hello@nordlys-gp.example">hello@nordlys-gp.example</a></p>
+    </div>
+  </div>
+  <p class="foot__legal">
+    <span>© {year} {team.name}.</span>
+    <span>{team.name} is a fictional team. This site demonstrates the stagecraft skill; every name, result and partner is invented.</span>
+    <span>Built with Astro, GSAP and Lenis. Typeset in Anton, Archivo and JetBrains Mono.</span>
+  </p>
+</footer>

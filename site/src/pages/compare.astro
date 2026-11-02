@@ -1,0 +1,16 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import NextDoor from '../components/NextDoor.astro';
+import Compare from '../components/Compare.astro';
+import compare from '../data/compare.json';
+import { doors } from '../data/site';
+const d = doors[3];
+---
+<Base title="Compare · stagecraft" description={d.promise} slug="compare">
+  <PageHead n="04" slug="compare" name={d.name} title={d.title} lede={compare.method} />
+  <section class="chapter" id="pairs" aria-label="The three pairs" style="padding-top:0">
+    <Compare />
+  </section>
+  <NextDoor slug="compare" />
+</Base>

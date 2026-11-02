@@ -1,7 +1,10 @@
 {
   "baseURL": "http://localhost:4321",
   "preview": "npm run preview",
-  "routes": ["/"],
+  "platform": "all",
+  "routes": [
+    "/"
+  ],
   "budgets": {
     "lcpMs": 2500,
     "cls": 0.1,
@@ -31,7 +34,25 @@
   },
   "ignoreRequests": [],
   "ignoreConsole": [],
-  "lazyChunks": ["three", "scene", "webgl", "rive", "lottie", "sequence"],
-  "axe": { "disableRules": [] },
-  "visual": { "maxDiffPixelRatio": 0.02 }
+  "lazyChunks": [
+    "three",
+    "scene",
+    "webgl",
+    "rive",
+    "lottie",
+    "sequence"
+  ],
+  "axe": {
+    "disableRules": []
+  },
+  "visual": {
+    "maxDiffPixelRatio": 0.02
+  },
+  "reading": {
+    "speed": 500,
+    "minHoldVp": 0.6,
+    "minFontPx": 26,
+    "maxBlankMs": 400,
+    "maxCollisions": 0
+  }
 }

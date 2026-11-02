@@ -1,0 +1,19 @@
+---
+interface Props { path: string; base: string }
+const { path, base } = Astro.props;
+const links = [
+  [`${base}/#lap`, 'The lap'], [`${base}/#car`, 'Car'], [`${base}/team/`, 'Team'], [`${base}/#calendar`, 'Calendar'], [`${base}/#join`, 'Join'],
+];
+const current = (href: string) => (href === path || href === path + '/') ? 'page' : undefined;
+---
+<header class="top" transition:persist="header">
+  <a class="top__brand" href={`${base}/`}><b>27</b> Nordlys GP</a>
+  <nav class="top__nav" aria-label="Primary">
+    {links.map(([href, label]) => <a href={href} aria-current={current(href)}>{label}</a>)}
+  </nav>
+  <button class="top__menu" type="button" data-menu-button aria-expanded="false" aria-controls="menu-panel">Menu</button>
+</header>
+<nav id="menu-panel" class="menu-panel" hidden aria-label="Menu">
+  <button class="menu-panel__close" type="button" data-menu-close>Close</button>
+  {links.map(([href, label]) => <a href={href} data-menu-link>{label}</a>)}
+</nav>

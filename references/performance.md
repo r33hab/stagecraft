@@ -1,6 +1,6 @@
-# Performance: the budgets and how winners actually weigh
+# Performance: the budgets, and lean versus heavy
 
-Juries test on real phones with throttled CPUs. A hero that drops to 18 fps on a mid-range Android,
+Reviewers test on real phones with throttled CPUs. A hero that drops to 18 fps on a mid-range Android,
 or a page that takes six seconds to paint, caps the score regardless of how it looks on a studio
 monitor. Performance here is not a polish step; it is a design constraint from the first sketch.
 
@@ -28,7 +28,15 @@ monitor. Performance here is not a polish step; it is a design constraint from t
 Edit `stagecraft.budgets.json` to loosen a budget on purpose and write why in the commit. The tests
 print every value, so a report is one `npx playwright test` away.
 
-## How the studied winners weigh (calibration)
+### Platform (intake Q8)
+
+`"platform"` in the budgets file is `"all"` by default: every budget above gates on mobile-low. A
+site that answered Q8 with "on a computer" sets `"desktop-first"`: the mobile-low perf budgets (LCP,
+long tasks, frame time, mobile weight) print as warnings and the desktop budgets gate, while
+accessibility, reading time, overflow and touch targets still gate on every device. Phones then get
+a composed version on purpose, not a broken one.
+
+## Lean versus heavy (calibration)
 
 | Pattern | Lean examples | Heavy examples |
 |---|---|---|
@@ -37,7 +45,7 @@ print every value, so a report is one `npx playwright test` away.
 | Webflow or builder marketing page | 220 KB JS, 14 script tags | 1.2 MB with four analytics tags and a chat widget |
 | Product story | 540 KB JS, 830 KB first view, 250 DOM nodes | 2 MB first view with 973 KB of JS |
 
-The lean column won the same awards as the heavy column. Shipping 15 MB is a choice, not a
+The lean column looks every bit as good as the heavy one. Shipping 15 MB is a choice, not a
 requirement of the look.
 
 ## Device tiers
@@ -55,6 +63,17 @@ probe, and sets `data-tier` on `<html>` before the first paint so CSS can branch
 Tiering is an *enhancement ladder*, so the low tier must look designed: same type, same colour, same
 hero composition, with the still of the scene instead of the scene.
 
+`refineTier` measures a second of frames once the page has loaded and gone idle (median over 34 ms or
+90th percentile over 60 ms demotes to low; 22 and 40 ms demote high to mid). Measuring during load
+reads parsing, fonts and setup as a slow device: a laptop with a fast GPU in Firefox was demoted that
+way. Leave out the second after a scroll jump (a `#link`, End, a dragged scrollbar) and run the window on
+for it: a page catching up on a jump is not a slow device either. A demotion can still come after the motion layer has run: pinned stages have set inline
+`opacity`, `visibility`, `transform` and `clip-path`, and the low-tier CSS cannot undo inline styles.
+Subscribe to the demotion and run the same cleanups as a page change, with each scene's cleanup
+clearing its inline styles (`gsap.set(targets, { clearProps: 'all' })`), restoring any element it moved
+in the DOM and resetting spacer heights; then put each scene in its finished state, as the static path
+would show it. The `firefox` project catches a miss.
+
 ## The LCP path
 
 1. The LCP element is the headline or the hero image, never the canvas. Render it in HTML.
@@ -67,7 +86,7 @@ hero composition, with the still of the scene instead of the scene.
    Lottie players, sequences and sound are dynamic imports after `load` + idle.
 5. CSS: one file, no `@import` chains, no blocking web-font CSS from third parties.
 6. Third parties: analytics and consent after idle; no chat widgets; no tag managers that load
-   five more tags (a studied site shipped 53 script tags from 8 hosts).
+   five more tags (sites have shipped 53 script tags from 8 hosts).
 7. `content-visibility: auto` with `contain-intrinsic-size` on below-fold chapters.
 8. Preconnect to the one CDN that matters, nothing else.
 
@@ -89,9 +108,19 @@ hero composition, with the still of the scene instead of the scene.
   jump during overscroll, so give the body a background that matches the first chapter.
 - Pin spacers change document height after fonts and images load: call
   `ScrollTrigger.refresh()` on `document.fonts.ready` and after the hero image loads.
+- A GSAP `pin` inserts its spacer when the trigger is created, after first paint, so everything
+  below jumps by the pin distance and CLS can hit 0.8 on a page that is otherwise stable. For
+  stages that live on the page from the start (handoffs, dials, scrubbed scenes), reserve the
+  distance in CSS instead: a tall spacer element whose height is the scroll distance and a
+  `position: sticky; top: 0; height: 100svh` stage inside it, with ScrollTrigger scrubbing against
+  the spacer (`start: 'top top', end: 'bottom bottom'`) and no pin. Same feel, zero shift; the
+  spacer's CSS height is the estimate, JS refines it on resize.
 
 ## 3D and canvas rules
 
+- Start a heavy scene only after the frame-rate check (`refineTier`): a shader compiling or data
+  decoding on the main thread during the check reads as a slow device, and the page demotes itself to
+  the static tier and tears its motion down. Decode in a worker; compile in parallel where supported.
 - Load the scene after LCP, behind `tier !== 'low'`, behind `IntersectionObserver` for scenes
   below the fold; pause the render loop when the canvas is off screen or the tab is hidden.
 - DPR: `Math.min(devicePixelRatio, tier === 'high' ? 1.5 : 1)`; textures at 2048 px or under,
@@ -106,6 +135,13 @@ hero composition, with the still of the scene instead of the scene.
   tests are a known trap (`pow(negative)` is NaN on real GPUs). The suite checks that the page is
   not blank *around* the canvas, and `audit` captures real-browser screenshots.
 
+## Intros and the LCP
+
+Text at opacity 0 does not count as painted, so an intro that holds the hero copy back moves LCP
+to the end of the intro (1.9 s on mobile-low for a 1.5 s wordmark reveal). Keep the intro under
+1.2 s, start bringing the copy in before it ends, and check LCP on mobile-low. Text that is merely
+covered by an overlay does count, so a mask over visible copy costs nothing.
+
 ## Images and video
 
 - AVIF first, WebP second, JPEG last; `sizes` that match the layout; a 1x and 2x set, nothing above
@@ -115,9 +151,15 @@ hero composition, with the still of the scene instead of the scene.
   pause control (WCAG 2.2.2); not loaded at all on low tier or `saveData`.
 - Reduced motion: posters instead of autoplay.
 
+Video as an asset: H.264 MP4 with `+faststart` (plays everywhere), two sizes (1280 and 720 wide)
+picked by viewport, a poster on the element, `preload="none"` until the chapter before it, one clip
+playing at a time, all paused off screen and on `visibilitychange`, posters only for tier low and
+reduced motion. Scrubbing video by scroll needs a keyframe on every frame and triples the size;
+loop clips and let the scroll cut between them instead.
+
 ## Consent dialogs
 
-A consent modal on first view covers the hero in the screenshot the jury takes and tanks the LCP
+A consent modal on first view covers the hero in the first screenshot anyone takes and tanks the LCP
 measurement. If analytics need consent, use a small bottom-left card, not a modal; load analytics
 only after consent and after idle; never cover the headline or the primary action.
 
@@ -130,3 +172,11 @@ npx lhci autorun   # optional, needs Chrome; config in lighthouserc.json
 ```
 Run perf tests on the production build (`preview`), never on the dev server (dev servers serve
 unbundled modules and skew every number).
+
+## Software GL
+
+Before any WebGL scene, call `softwareGl()` from `assets/runtime/tier.ts`: a software renderer
+(SwiftShader, llvmpipe, most headless browsers and some virtual machines) draws a scene at a few
+frames per second however small it is, so those visitors get the still and the DOM version. The
+test suite runs headless, which means the suite measures the static path of a 3D page; check the
+scene itself in a real browser with the GPU on.

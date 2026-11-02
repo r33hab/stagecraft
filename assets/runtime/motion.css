@@ -58,9 +58,16 @@ html.no-io [data-reveal] { opacity: 1; transform: none; }
 /* Focus ring that survives custom cursors and dark chapters. */
 :focus-visible { outline: 2px solid var(--ring, currentColor); outline-offset: 3px; }
 
-/* Custom cursor is a fine-pointer feature only. */
-[data-cursor] { display: none; pointer-events: none; }
-@media (hover: hover) and (pointer: fine) { html:not([data-tier="low"]) [data-cursor] { display: block; } }
+/* Custom cursor: fine pointers only. It replaces the native cursor (html.has-cursor, set by JS once the dot
+   has a position) and tracks it 1:1: set its transform on pointermove, never through a lerp loop. */
+[data-cursor] { display: none; pointer-events: none; will-change: transform; transition: width .2s, height .2s, opacity .2s; }
+@media (hover: hover) and (pointer: fine) {
+  html:not([data-tier="low"]) [data-cursor] { display: block; }
+  html.has-cursor:not([data-tier="low"]), html.has-cursor:not([data-tier="low"]) :where(a, button, [role="button"], summary, label) { cursor: none; }
+  html.has-cursor :where(input, textarea, select, [contenteditable]) { cursor: auto; }
+  [data-cursor].is-hover { width: 36px; height: 36px; }
+  [data-cursor].is-hidden, [data-cursor].is-field { opacity: 0; }
+}
 
 /* Grain overlay: static, cheap. Never animate it. */
 .grain { position: fixed; inset: 0; pointer-events: none; opacity: 0.045; z-index: 50;

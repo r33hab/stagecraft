@@ -14,10 +14,12 @@ for (const route of routes) {
       const over = await page.evaluate(() => {
         const doc = document.documentElement;
         const widest = Math.max(doc.scrollWidth, document.body.scrollWidth);
+        // Elements clipped by an overflow-hidden ancestor (marquee tracks, masks) cannot widen the page.
+        const clipped = (el: Element) => { let n = el.parentElement; while (n && n !== document.body) { const o = getComputedStyle(n); if (/(hidden|clip|auto|scroll)/.test(o.overflowX + o.overflow)) return true; n = n.parentElement; } return false; };
         const offenders = Array.from(document.querySelectorAll('body *'))
           .filter((el) => {
             const r = el.getBoundingClientRect();
-            return r.width > 0 && r.right > doc.clientWidth + 1 && getComputedStyle(el).position !== 'fixed';
+            return r.width > 0 && r.right > doc.clientWidth + 1 && getComputedStyle(el).position !== 'fixed' && !clipped(el);
           })
           .slice(0, 5)
           .map((el) => `${el.tagName.toLowerCase()}${el.id ? '#' + el.id : ''}${el.className && typeof el.className === 'string' ? '.' + el.className.trim().split(/\s+/).slice(0, 2).join('.') : ''}`);

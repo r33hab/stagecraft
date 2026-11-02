@@ -11,7 +11,7 @@ Declare once in `:root` and use everywhere; the tests read them too.
 ```css
 :root {
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);        /* expo-out: reveals, slides */
-  --ease-in-out: cubic-bezier(0.65, 0.05, 0, 1);    /* the "award" curve: wipes, curtains, pins */
+  --ease-in-out: cubic-bezier(0.65, 0.05, 0, 1);    /* the signature curve: wipes, curtains, pins */
   --ease-spring: linear(0, 0.3 10%, 0.8 25%, 1.05 40%, 0.98 55%, 1 70%); /* Playground only */
   --dur-fast: 0.25s;   /* hovers, toggles */
   --dur-base: 0.6s;    /* reveals */
@@ -38,11 +38,18 @@ supported, behind `@supports`, with an IntersectionObserver fallback (`assets/ru
 
 **Layer 2, GSAP (core + ScrollTrigger, SplitText, Flip when needed).** Sequenced timelines, pinned
 stages, scrubbed scenes, split-text lines, FLIP layout changes. GSAP 3.13+ is free for commercial
-work including these plugins. Import only what is used.
+work including these plugins. Import only what is used. A Flip with `absolute: true` (a list
+becoming a grid) takes the items out of flow while they move: hold the container's height, tween
+it to the new one, and release it in the Flip's `onComplete` (a stagger makes the Flip outlast the
+height tween), or the page below jumps up into view.
 
 **Smooth scroll (Lenis)** is optional and only on fine-pointer devices with no reduced-motion
 preference; touch stays native. Drive Lenis and ScrollTrigger from one ticker
-(`assets/runtime/lenis-gsap.ts`), never two rAF loops.
+(`assets/runtime/lenis-gsap.ts`), never two rAF loops. With a client router, Lenis outlives the page:
+re-sync it after every swap (top for a new page, the `#target`, or the saved position on back) and
+handle links to the current page yourself; `lenis-gsap.ts` does both. Arriving at a `#target` (from
+another page, or a shared link) follow it until its place holds still: pins and script-sized spacers
+above it are still growing when the page first scrolls, and one jump landed 3000 px short.
 
 **Canvas / WebGL** is layer 3 and lives in `performance.md` because its rules are budget rules.
 
@@ -111,34 +118,46 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
 
+// Three states, 1.2 vp each. The object turns continuously; the copy is discrete and never overlaps.
 const tl = gsap.timeline({
-  scrollTrigger: { trigger: '.stage', start: 'top top', end: '+=300%', pin: true, scrub: 0.6, anticipatePin: 1 },
+  defaults: { ease: 'none' },
+  scrollTrigger: { trigger: '.stage', start: 'top top', end: '+=360%', pin: true, scrub: true /* Lenis smooths; 0.5 without Lenis */, anticipatePin: 1 },
 });
-tl.to('.stage__object', { rotateY: 180, ease: 'none' }, 0)
-  .to('.stage__copy--1', { autoAlpha: 0 }, 0.3)
-  .to('.stage__copy--2', { autoAlpha: 1 }, 0.35)
-  .to('.stage__copy--2', { autoAlpha: 0 }, 0.65)
-  .to('.stage__copy--3', { autoAlpha: 1 }, 0.7);
+tl.to('.stage__object', { rotateY: 360, duration: 3 }, 0)
+  .to('.stage__copy--1', { yPercent: -40, autoAlpha: 0, duration: 0.1, ease: 'power2.in' }, 0.9)
+  .fromTo('.stage__copy--2', { yPercent: 40, autoAlpha: 0 }, { yPercent: 0, autoAlpha: 1, duration: 0.15, ease: 'power3.out' }, 1.02)
+  .to('.stage__copy--2', { yPercent: -40, autoAlpha: 0, duration: 0.1, ease: 'power2.in' }, 1.9)
+  .fromTo('.stage__copy--3', { yPercent: 40, autoAlpha: 0 }, { yPercent: 0, autoAlpha: 1, duration: 0.15, ease: 'power3.out' }, 2.02);
 ```
-`end: '+=300%'` means three viewports of scroll for three states. Keep pinned sections under five
-viewports. On mobile and low tier, kill the trigger and lay the three copies out vertically with
-the object static (`ScrollTrigger.matchMedia` or `gsap.matchMedia()`).
+Each state is 1.2 vp of scroll; its copy is readable for about 0.9 of it. The outgoing line has left
+before the incoming one rises, so copy never stacks on copy, and the object behind keeps moving, so
+the stage never shows nothing. Keep pinned sections under five viewports; past four states, play each
+state's copy as a time-based reveal on entering its range (`craft.md`, "Long pins"). On mobile and
+low tier, kill the trigger and lay the copies out vertically with the object static
+(`gsap.matchMedia()`). `reading.spec.ts` measures the holds.
 
 ### Horizontal chapters (Horizon)
 
+Stepped track: panels exactly 100vw, each holds, then the track glides to the next.
 ```ts
-const track = document.querySelector('.track')!;
+const track = document.querySelector<HTMLElement>('.track')!;
 const panels = gsap.utils.toArray<HTMLElement>('.track > .panel');
-gsap.to(track, {
-  x: () => -(track.scrollWidth - innerWidth),
-  ease: 'none',
-  scrollTrigger: { trigger: '.track-wrap', start: 'top top', end: () => '+=' + (track.scrollWidth - innerWidth), pin: true, scrub: 0.5, invalidateOnRefresh: true },
+const vh = innerHeight, hold = vh * 0.55, glide = vh * 0.65;
+const tl = gsap.timeline({ scrollTrigger: { trigger: '.track-wrap', start: 'top top', end: () => '+=' + (hold + (panels.length - 1) * (glide + hold)), pin: true, scrub: true, invalidateOnRefresh: true } });
+tl.to({}, { duration: hold });
+panels.slice(1).forEach((p, i) => {
+  tl.to(track, { x: () => -p.offsetLeft, duration: glide, ease: 'power2.inOut' })
+    .fromTo(p.querySelector('.panel__n'), { xPercent: 45 }, { xPercent: 0, duration: glide, ease: 'power2.out' }, '<')
+    .to({}, { duration: hold });
 });
 ```
-Below 900 px or on touch: no transform, panels stack vertically. Keyboard: panels contain focusable
-content, so `scroll-padding` and a visible focus ring are needed; ScrollTrigger keeps the document
-scrollable, so Tab still works. Test it (`motion.spec.ts` tabs through and checks every focused
-element is on screen).
+Continuous rail with depth: one `x: () => -(track.scrollWidth - innerWidth)` tween, `ease: 'none'`,
+`end: () => '+=' + distance`, `scrub: true`, and per-item drift through `containerAnimation`
+(`gsap.to(item, { x: '4rem', ease: 'none', scrollTrigger: { trigger: item, containerAnimation: rail, start: 'left right', end: 'right left', scrub: true } })`).
+Either way: a lead-in (the intro holds 0.5 vp, arriving through a window or an edge) and a designed
+exit (`choreography.md`, move 1). Below 900 px or on touch: no transform, panels stack vertically.
+Keyboard: panels contain focusable content, so `scroll-padding` and a visible focus ring are needed;
+ScrollTrigger keeps the document scrollable, so Tab still works (`motion.spec.ts` checks it).
 
 ### Sticky stack
 
@@ -180,10 +199,43 @@ pause button is required when it carries meaning (logos are meaning).
 
 Both are wrapped in `if (matchMedia('(hover: hover) and (pointer: fine)').matches)`. Magnetic: on
 `pointermove` within 80 px, translate the button by 25 % of the offset with a 0.3 s expo tween; reset
-on leave. Cursor: a 12 px dot plus a 40 px ring, `mix-blend-mode: difference`, following the pointer
-with a 0.15 s lerp; `data-cursor="view"` elements enlarge the ring with a label. The native cursor
-stays visible (`cursor: auto`) on form fields and the custom one hides there. Never on touch: the
-test checks `[data-cursor]` is not visible when the pointer is coarse.
+on leave. Cursor: a dot that *replaces* the native cursor, never one that trails beside it. Once
+the dot has a position, `html.has-cursor { cursor: none }`; the dot's transform is set directly on
+`pointermove` (no lerp, no rAF loop: a dot lagging a few frames behind the real pointer is the
+most common cursor mistake, and the two visible at once is the second). Only a secondary ring may
+lerp (0.5 or tighter). Because the pointer-hand is gone, interactive elements grow the dot
+(`is-hover`); form fields and iframes get the native cursor back and hide the dot; the dot hides
+when the pointer leaves the window and on the first Tab, so keyboard users keep the native cursor.
+`assets/runtime/motion.css` carries the CSS. Never on touch: the test checks `[data-cursor]` is
+not visible when the pointer is coarse.
+
+### Springs, drag and SVG with anime.js
+
+When the site runs anime.js instead of GSAP (`stack.md`, "GSAP or anime.js"):
+
+```ts
+import { animate, createTimeline, stagger, spring, createDraggable, svg, text, onScroll } from 'animejs';
+
+// A card that lands like an object: spring, not a bezier.
+animate('.card', { y: [40, 0], opacity: [0, 1], ease: spring({ stiffness: 120, damping: 14 }), delay: stagger(60) });
+
+// A wall of tiles rippling from the centre (or from the hovered tile with `from: index`).
+animate('.tile', { scale: [0.9, 1], delay: stagger(40, { grid: [8, 4], from: 'center' }) });
+
+// Draw-on that needs no path-length measuring; morph a shape into another with the same API.
+animate(svg.createDrawable('.plan path'), { draw: ['0 0', '0 1'], duration: 1800, ease: 'inOutSine', autoplay: onScroll({ sync: 0.3 }) });
+animate('#logo path', { d: svg.morphTo('#logo-alt path'), duration: 900, ease: 'inOutQuad' });
+
+// Stickers you can throw (Playground): physics, bounds, snap.
+createDraggable('.sticker', { container: '.board', snap: 8, releaseEase: spring({ stiffness: 80 }) });
+
+// Lines rise, with accessible markup kept intact.
+const { lines } = text.split('h1', { lines: { wrap: 'clip' } });
+animate(lines, { y: ['110%', '0%'], delay: stagger(70), ease: 'outExpo', duration: 900 });
+```
+
+Same rules as everywhere else: reduced motion gets the end state, `revert()` on page swap, no
+second ticker beside Lenis.
 
 ### Page transitions
 
@@ -215,7 +267,7 @@ second navigation within the same context.
 
 A static SVG `feTurbulence` tile as a `background-image` on a fixed, pointer-events-none layer at 3 to
 6 % opacity. Do not animate it; animated grain (changing `seed` each frame) is a full-screen repaint
-on every frame and is the single biggest frame-time killer seen on award entries.
+on every frame and is the single biggest frame-time killer seen in the wild.
 
 ### Theme per chapter
 

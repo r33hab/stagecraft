@@ -1,0 +1,62 @@
+{
+  "baseURL": "http://localhost:4322",
+  "preview": "npm run preview -- --port 4322",
+  "platform": "desktop-first",
+  "routes": [
+    "/stagecraft/",
+    "/stagecraft/method/",
+    "/stagecraft/directions/",
+    "/stagecraft/suite/",
+    "/stagecraft/compare/"
+  ],
+  "budgets": {
+    "lcpMs": 2500,
+    "cls": 0.1,
+    "longTaskTotalMs": 300,
+    "longTaskMaxMs": 100,
+    "frameP95Ms": 34,
+    "scriptKb": 170,
+    "lazyChunkKb": 260,
+    "cssKb": 60,
+    "fontKb": 150,
+    "fontFiles": 2,
+    "fontFamilies": 3,
+    "imageKbMobile": 1200,
+    "totalKbMobile": 2500,
+    "totalKbDesktop": 6000,
+    "heroImageKb": 250,
+    "domNodes": 2500,
+    "preloaderMs": 2500,
+    "thirdPartyHosts": 2
+  },
+  "selectors": {
+    "preloader": "[data-preloader]",
+    "cursor": "[data-cursor]",
+    "reveal": "[data-reveal]",
+    "menuButton": "[data-menu-button]",
+    "dynamic": "[data-dynamic]"
+  },
+  "ignoreRequests": [],
+  "ignoreConsole": [],
+  "lazyChunks": [
+    "three",
+    "scene",
+    "webgl",
+    "rive",
+    "lottie",
+    "sequence"
+  ],
+  "axe": {
+    "disableRules": []
+  },
+  "visual": {
+    "maxDiffPixelRatio": 0.02
+  },
+  "reading": {
+    "speed": 500,
+    "minHoldVp": 0.6,
+    "minFontPx": 26,
+    "maxBlankMs": 400,
+    "maxCollisions": 0
+  }
+}

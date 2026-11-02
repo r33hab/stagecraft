@@ -1,0 +1,11 @@
+---
+import Base from '../layouts/Base.astro';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<Base title="Not found · Mira Solberg" description="That page does not exist. Back to the work.">
+  <section class="chapter statement">
+    <p class="label">Error 404</p>
+    <h1 class="statement__text">Nothing here. <em>The work is one tap away.</em></h1>
+    <p><a class="pill pill--solid" href={`${base}/#work`}>All work</a></p>
+  </section>
+</Base>

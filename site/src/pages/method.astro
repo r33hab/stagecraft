@@ -1,0 +1,31 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import NextDoor from '../components/NextDoor.astro';
+import { build, weights, doors } from '../data/site';
+const d = doors[0];
+---
+<Base title="Method · stagecraft" description={d.promise} slug="method">
+  <PageHead n="01" slug="method" name={d.name} title={d.title} lede="Six steps, each a card that stays while the next arrives. The order is the point: a page that already looks designed as plain HTML can afford to get ambitious with motion." />
+  <section class="chapter" id="order" aria-label="The six steps" style="padding-top:0">
+    <div class="stack" data-stack>
+      {build.map(([t, c], i) => (
+        <article class="stack__card" data-stack-card>
+          <span class="stack__n">0{i + 1}</span>
+          <h2 class="stack__t">{t}</h2>
+          <p class="stack__d">{c}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+  <section class="chapter" id="calibration" aria-labelledby="weights-title">
+    <div class="chapter__head"><span>Calibration</span></div>
+    <h2 class="h2" id="weights-title" data-reveal>Lean beats heavy</h2>
+    <p class="lede" data-reveal style="margin-bottom:2rem">Two ways the same kind of site ends up. The lean column is what the budgets enforce; it looks every bit as good.</p>
+    <table class="table" data-reveal>
+      <thead><tr><th>Pattern</th><th>Lean</th><th class="hide-sm">Heavy</th></tr></thead>
+      <tbody>{weights.map(([k, l, h]) => <tr><td>{k}</td><td>{l}</td><td class="muted hide-sm">{h}</td></tr>)}</tbody>
+    </table>
+  </section>
+  <NextDoor slug="method" />
+</Base>

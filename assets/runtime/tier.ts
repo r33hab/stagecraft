@@ -11,6 +11,18 @@
  */
 export type Tier = 'low' | 'mid' | 'high';
 
+/** Software GL (SwiftShader, llvmpipe, headless) renders a scene at a few frames per second: no WebGL scene there. */
+export function softwareGl(): boolean {
+  try {
+    const c = document.createElement('canvas');
+    const gl = (c.getContext('webgl2') || c.getContext('webgl')) as WebGLRenderingContext | null;
+    if (!gl) return true;
+    const ext = gl.getExtension('WEBGL_debug_renderer_info');
+    const r = ext ? String(gl.getParameter(ext.UNMASKED_RENDERER_WEBGL)) : '';
+    return /swiftshader|llvmpipe|software|mesa offscreen/i.test(r);
+  } catch { return true; }
+}
+
 export function detectTier(): Tier {
   const nav = navigator as Navigator & { deviceMemory?: number; connection?: { saveData?: boolean; effectiveType?: string } };
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -52,13 +64,38 @@ export function probeFrames(ms = 1000): Promise<number> {
   });
 }
 
-/** Demote the tier if the device cannot hold 50 fps while idle. Call after the first paint. */
+/** Demote the tier if the device cannot hold the frame rate while idle. Measures an idle page, not a loading one: it
+ *  waits for the load event and a quiet moment, so parsing, fonts and setup are not read as a slow device. Then the
+ *  median and the 90th percentile of a second of frames decide: a device whose typical frame is slow, or whose bad
+ *  frames are very bad, steps down. Start heavy work (a 3D scene) only after it resolves. */
 export async function refineTier(current: Tier): Promise<Tier> {
   if (current === 'low') return current;
-  const p95 = await probeFrames(1000);
-  const next: Tier = p95 > 40 ? 'low' : p95 > 24 && current === 'high' ? 'mid' : current;
+  if (document.readyState !== 'complete') await new Promise((r) => addEventListener('load', r, { once: true }));
+  await new Promise((r) => ('requestIdleCallback' in window ? (window as any).requestIdleCallback(r, { timeout: 1500 }) : setTimeout(r, 400)));
+  const d = await sampleFrames(1000);
+  const p50 = d[Math.floor(d.length * 0.5)] ?? 16, p90 = d[Math.floor(d.length * 0.9)] ?? 16;
+  const next: Tier = p50 > 34 || p90 > 60 ? 'low' : (p50 > 22 || p90 > 40) && current === 'high' ? 'mid' : current;
   if (next !== current) document.documentElement.dataset.tier = next;
   return next;
+}
+
+/** Frame intervals over `ms`, sorted ascending. The second after a scroll jump (a #link, the End key, a dragged
+ *  scrollbar) is left out and the window runs on for it (three times `ms` at most): a page catching up on a jump is not
+ *  a slow device, and reading it as one sent a laptop GPU in Firefox to the static page. */
+export function sampleFrames(ms = 1000): Promise<number[]> {
+  return new Promise((resolve) => {
+    const d: number[] = [];
+    let last = performance.now(), y = scrollY, skip = 0, end = last + ms;
+    const limit = last + ms * 3;
+    const tick = (t: number) => {
+      if (Math.abs(scrollY - y) > innerHeight * 0.75) skip = 60;
+      y = scrollY;
+      if (skip > 0) { skip--; end = Math.min(limit, end + (t - last)); } else d.push(t - last);
+      last = t;
+      if (t < end) requestAnimationFrame(tick); else resolve(d.sort((a, b) => a - b));
+    };
+    requestAnimationFrame(tick);
+  });
 }
 
 /** Pixel ratio cap for canvases by tier. */

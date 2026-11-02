@@ -1,0 +1,36 @@
+---
+import { lap } from '../data/season';
+const d = 'M 120 420 C 120 300 180 240 300 230 C 400 222 430 160 520 140 C 620 118 700 150 760 120 C 830 85 900 110 900 190 C 900 260 820 280 790 330 C 760 380 820 430 760 470 C 700 515 600 470 520 500 C 440 530 420 580 330 560 C 240 540 200 520 160 500 C 125 480 120 460 120 420 Z';
+---
+<section class="chapter lap" id="lap" data-theme="ink" aria-labelledby="lap-title">
+  <div class="lap__stage" data-stage>
+    <svg class="lap__map" viewBox="0 0 1000 620" role="img" aria-labelledby="lap-map-title" data-lap-map>
+      <title id="lap-map-title">Map of the {lap.circuit}, drawn as the lap is scrolled</title>
+      <g class="contours" aria-hidden="true">{[0.56, 0.72, 0.86, 1.13, 1.27].map((k, i) => <path d={d} transform={`translate(${(510 * (1 - k)).toFixed(1)} ${(332 * (1 - k)).toFixed(1)}) scale(${k})`} style={`stroke-opacity:${[0.07, 0.1, 0.14, 0.12, 0.07][i]}`} />)}</g>
+      <path class="track track--ghost" d={d} />
+      <path class="track" id="track" d={d} pathLength="1" style="stroke-dasharray:1;stroke-dashoffset:1" data-track />
+      <path class="sector sector--halo" d={d} pathLength="1" style="stroke-dasharray:1;stroke-dashoffset:1" data-sector-line />
+      <path class="sector sector--glow" d={d} pathLength="1" style="stroke-dasharray:1;stroke-dashoffset:1" data-sector-line />
+      <path class="sector" d={d} pathLength="1" style="stroke-dasharray:1;stroke-dashoffset:1" data-sector-line />
+      <path class="trail" d={d} pathLength="1" style="stroke-dasharray:0.045 2;stroke-dashoffset:0.045" data-trail />
+      <path class="start" d="M 100 420 L 140 420" />
+      <text x="60" y="455">Start</text>
+      <text x="560" y="118">S1</text>
+      <text x="930" y="300">S2</text>
+      <text x="300" y="610">S3</text>
+      <g data-marker transform="translate(120 420)"><circle class="marker__halo" r="34" /><circle class="marker" r="13" /></g>
+    </svg>
+    <div class="lap__panel">
+      <p class="label">01 · The lap</p>
+      <h2 class="lap__title" id="lap-title">Scroll the lap</h2>
+      <p class="lap__copy">The {lap.circuit}, {lap.length}. Keep scrolling and car 27 drives it; the readouts are the telemetry from our best lap of the winter.</p>
+      <div class="readout"><span class="readout__k">Speed</span><span class="readout__v"><span data-speed>0</span> <small>km/h</small></span></div>
+      <div class="readout"><span class="readout__k">Gear</span><span class="readout__v" data-gear>N</span></div>
+      <div class="readout"><span class="readout__k">Lap time</span><span class="readout__v" data-laptime>0:00.000</span></div>
+      <div class="sectors" data-sectors>
+        {lap.sectors.map((s, i) => <div class="sector-card"><span class="label">S{i + 1}</span><b data-sector={i}>{s.toFixed(3)}</b></div>)}
+      </div>
+      <p class="label">Best: {lap.best}</p>
+    </div>
+  </div>
+</section>

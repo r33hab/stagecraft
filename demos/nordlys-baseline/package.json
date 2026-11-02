@@ -1,0 +1,10 @@
+{
+  "name": "nordlys-baseline",
+  "private": true,
+  "scripts": {
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:perf": "playwright test --project=mobile-low tests/stagecraft/perf.spec.ts",
+    "test:budgets": "node scripts/check-budgets.mjs --dist dist"
+  }
+}

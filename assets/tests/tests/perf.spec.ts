@@ -27,6 +27,20 @@ for (const route of routes) {
     const loadMs = Date.now() - t0;
     await settle(page, 1200);
 
+    // The hero image is judged at first view, before any scrolling: the LCP element when it is an image, otherwise
+    // the first visible image of 200 x 200 px or more in the viewport. Hidden or later images (a poster in a closed
+    // panel further down) are not the hero.
+    const heroImg = await page.evaluate(() => {
+      const sc = (window as any).__sc;
+      const res = performance.getEntriesByType('resource') as PerformanceResourceTiming[];
+      const shown = (i: HTMLImageElement) => { const r = i.getBoundingClientRect(); return r.top < innerHeight && r.bottom > 0 && r.width * r.height > 40000 && (i as any).checkVisibility?.({ checkOpacity: true, checkVisibilityCSS: true }) !== false; };
+      const imgs = Array.from(document.images).filter(shown);
+      const byLcp = sc?.lcpEl?.startsWith('IMG') ? imgs.find((i) => sc.lcpEl.endsWith(i.currentSrc.split('/').pop() || '\u0000')) : undefined;
+      const i = byLcp || imgs[0];
+      if (!i) return null;
+      return { src: i.currentSrc.split('/').pop()?.slice(0, 48), lazy: i.loading === 'lazy', fetchpriority: (i as any).fetchPriority || 'auto', hasSize: !!(i.getAttribute('width') && i.getAttribute('height')) || getComputedStyle(i).aspectRatio !== 'auto', bytes: (res.find((r) => r.name === i.currentSrc) as any)?.transferSize || 0 };
+    });
+
     // Frame-time sampling while scrolling: start the sampler, scroll from the test, then collect.
     const sampler = page.evaluate(
       (ms) =>
@@ -79,17 +93,11 @@ for (const route of routes) {
       }
       for (const k in by) by[k].files.sort((a, b) => b.kb - a.kb);
       const families = new Set<string>();
-      try { (document as any).fonts.forEach((f: FontFace) => { if (f.status === 'loaded') families.add(f.family.replace(/["']/g, '')); }); } catch {}
-      const lcpImg = (() => {
-        const imgs = Array.from(document.images).filter((i) => { const r = i.getBoundingClientRect(); return r.top < innerHeight && r.width * r.height > 40000; });
-        const i = imgs[0];
-        if (!i) return null;
-        return { src: i.currentSrc.split('/').pop()?.slice(0, 48), lazy: i.loading === 'lazy', fetchpriority: (i as any).fetchPriority || 'auto', hasSize: !!(i.getAttribute('width') && i.getAttribute('height')) || getComputedStyle(i).aspectRatio !== 'auto', bytes: (res.find((r) => r.name === i.currentSrc) as any)?.transferSize || 0 };
-      })();
+      // Metric-matched fallback faces (local() with size-adjust) are not downloads; they do not count.
+      try { (document as any).fonts.forEach((f: FontFace) => { if (f.status === 'loaded' && !/fallback/i.test(f.family)) families.add(f.family.replace(/["']/g, '')); }); } catch {}
       return {
         lcp: Math.round(sc.lcp), lcpEl: sc.lcpEl, cls: +sc.cls.toFixed(3), longTasks: sc.longTasks as number[],
         by, domNodes: document.getElementsByTagName('*').length, families: [...families], html: Math.round((nav?.transferSize || 0) / 1024),
-        lcpImg,
       };
     });
 
@@ -104,18 +112,20 @@ for (const route of routes) {
     const lazyScriptKb = scriptFiles.filter((f) => cfg.lazyChunks?.length && lazyRe.test(f.name)).reduce((a, f) => a + f.kb, 0);
     const unmeasured = Object.values(m.by).reduce((a, b) => a + b.unmeasured, 0);
 
+    const screens = await page.evaluate(() => Math.round((document.documentElement.scrollHeight / innerHeight) * 10) / 10);
     const rows = [
       ['project', info.project.name], ['route', route], ['load (ms)', loadMs], ['LCP (ms)', `${m.lcp} ${m.lcpEl ? '← ' + m.lcpEl : ''}`], ['CLS', m.cls],
       ['long tasks during scroll', `${longDuring.length} (max ${longMax} ms, blocking ${longTotal} ms)`], ['frame p50 / p95 (ms)', `${p50.toFixed(1)} / ${p95.toFixed(1)}`],
       ['HTML', `${m.html} KB`], ['scripts initial / lazy', `${initialScriptKb} / ${lazyScriptKb} KB (${scriptFiles.length} files)`], ['css', `${kb('css')} KB`],
       ['fonts', `${kb('font')} KB (${m.by.font?.n || 0} files, families: ${m.families.join(', ') || 'none loaded'})`], ['images', `${kb('image')} KB (${m.by.image?.n || 0})`], ['media', `${kb('media')} KB (${m.by.media?.n || 0})`],
-      ['total first view', `${Math.round(total)} KB`], ['DOM nodes', m.domNodes], ['hero image', m.lcpImg ? `${m.lcpImg.src} ${fmtKb(m.lcpImg.bytes)} lazy=${m.lcpImg.lazy} fetchpriority=${m.lcpImg.fetchpriority} sized=${m.lcpImg.hasSize}` : 'none in first viewport'],
-      ['unmeasured cross-origin resources', unmeasured],
+      ['total first view', `${Math.round(total)} KB`], ['DOM nodes', m.domNodes], ['hero image', heroImg ? `${heroImg.src} ${fmtKb(heroImg.bytes)} lazy=${heroImg.lazy} fetchpriority=${heroImg.fetchpriority} sized=${heroImg.hasSize}` : 'none in first viewport'],
+      ['scroll length (screens)', screens], ['unmeasured cross-origin resources', unmeasured],
     ];
     console.log(`\n[stagecraft perf] ${route} (${info.project.name})\n` + rows.map(([k, v]) => `  ${String(k).padEnd(32)} ${v}`).join('\n'));
     if (scriptFiles.length) console.log('  largest scripts: ' + scriptFiles.slice(0, 5).map((f) => `${f.name} ${f.kb}KB`).join(', '));
 
     const soft = (cond: boolean, msg: string) => { if (!cond) console.warn(`[stagecraft] ${route}: ${msg}`); };
+    if (!low) { if (B.scrollScreens) expect(screens, 'scroll length in screens (see ux.md, page map)').toBeLessThanOrEqual(B.scrollScreens); else soft(screens <= 12, `scroll length ${screens} screens; past 12 a landing usually wants a page map (ux.md), set budgets.scrollScreens to enforce`); }
 
     expect(m.cls, 'CLS').toBeLessThanOrEqual(B.cls);
     expect(initialScriptKb, 'initial script KB').toBeLessThanOrEqual(B.scriptKb);
@@ -124,19 +134,22 @@ for (const route of routes) {
     expect(m.families.length, `font families (${m.families.join(', ')})`).toBeLessThanOrEqual(B.fontFamilies);
     expect(kb('font'), 'font KB').toBeLessThanOrEqual(B.fontKb);
     expect(m.domNodes, 'DOM nodes').toBeLessThanOrEqual(B.domNodes);
-    if (m.lcpImg) {
-      expect(m.lcpImg.lazy, 'hero image is lazy-loaded').toBeFalsy();
-      expect(m.lcpImg.hasSize, 'hero image has width/height or aspect-ratio').toBeTruthy();
-      soft(m.lcpImg.fetchpriority === 'high', 'hero image has no fetchpriority="high"');
-      if (m.lcpImg.bytes) expect(Math.round(m.lcpImg.bytes / 1024), 'hero image KB').toBeLessThanOrEqual(B.heroImageKb);
+    if (heroImg) {
+      expect(heroImg.lazy, 'hero image is lazy-loaded').toBeFalsy();
+      expect(heroImg.hasSize, 'hero image has width/height or aspect-ratio').toBeTruthy();
+      soft(heroImg.fetchpriority === 'high', 'hero image has no fetchpriority="high"');
+      if (heroImg.bytes) expect(Math.round(heroImg.bytes / 1024), 'hero image KB').toBeLessThanOrEqual(B.heroImageKb);
     }
     if (low) {
-      expect(m.lcp, 'LCP (ms) on throttled mobile').toBeLessThanOrEqual(B.lcpMs);
-      expect(longMax, 'longest task during scroll (ms)').toBeLessThanOrEqual(B.longTaskMaxMs);
-      expect(longTotal, 'total blocking during scroll (ms)').toBeLessThanOrEqual(B.longTaskTotalMs);
-      expect(p95, 'frame time p95 (ms) while scrolling').toBeLessThanOrEqual(B.frameP95Ms);
-      expect(kb('image'), 'image KB on mobile').toBeLessThanOrEqual(B.imageKbMobile);
-      expect(Math.round(total), 'total first-view KB on mobile').toBeLessThanOrEqual(B.totalKbMobile);
+      // A desktop-first site (intake Q8, "platform": "desktop-first") shows phones a composed version on purpose:
+      // its mobile budgets warn instead of failing. Everything else still gates.
+      const atMost = (v: number, max: number, msg: string) => (cfg.platform === 'desktop-first' ? soft(v <= max, `${msg}: ${v} over ${max} (desktop-first: warning)`) : expect(v, msg).toBeLessThanOrEqual(max));
+      atMost(m.lcp, B.lcpMs, 'LCP (ms) on throttled mobile');
+      atMost(longMax, B.longTaskMaxMs, 'longest task during scroll (ms)');
+      atMost(longTotal, B.longTaskTotalMs, 'total blocking during scroll (ms)');
+      atMost(p95, B.frameP95Ms, 'frame time p95 (ms) while scrolling');
+      atMost(kb('image'), B.imageKbMobile, 'image KB on mobile');
+      atMost(Math.round(total), B.totalKbMobile, 'total first-view KB on mobile');
     } else {
       soft(m.lcp <= B.lcpMs, `desktop LCP ${m.lcp} ms over ${B.lcpMs}`);
       expect(Math.round(total), 'total first-view KB on desktop').toBeLessThanOrEqual(B.totalKbDesktop);

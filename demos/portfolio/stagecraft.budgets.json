@@ -1,0 +1,51 @@
+{
+  "baseURL": "http://localhost:4323",
+  "preview": "npm run preview -- --port 4323",
+  "routes": [
+    "/stagecraft/demos/portfolio/",
+    "/stagecraft/demos/portfolio/work/ledger/"
+  ],
+  "budgets": {
+    "lcpMs": 2500,
+    "cls": 0.1,
+    "longTaskTotalMs": 300,
+    "longTaskMaxMs": 100,
+    "frameP95Ms": 34,
+    "scriptKb": 170,
+    "lazyChunkKb": 260,
+    "cssKb": 60,
+    "fontKb": 150,
+    "fontFiles": 2,
+    "fontFamilies": 3,
+    "imageKbMobile": 1200,
+    "totalKbMobile": 2500,
+    "totalKbDesktop": 6000,
+    "heroImageKb": 250,
+    "domNodes": 2500,
+    "preloaderMs": 2500,
+    "thirdPartyHosts": 2
+  },
+  "selectors": {
+    "preloader": "[data-preloader]",
+    "cursor": "[data-cursor]",
+    "reveal": "[data-reveal]",
+    "menuButton": "[data-menu-button]",
+    "dynamic": "[data-dynamic]"
+  },
+  "ignoreRequests": [],
+  "ignoreConsole": [],
+  "lazyChunks": [
+    "three",
+    "scene",
+    "webgl",
+    "rive",
+    "lottie",
+    "sequence"
+  ],
+  "axe": {
+    "disableRules": []
+  },
+  "visual": {
+    "maxDiffPixelRatio": 0.02
+  }
+}

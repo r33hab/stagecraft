@@ -1,0 +1,55 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props { title: string; description: string; theme?: 'ink' | 'paper' }
+const { title, description, theme = 'ink' } = Astro.props;
+const path = Astro.url.pathname;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<!doctype html>
+<html lang="en" data-theme={theme}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0b0b0d" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="canonical" href={new URL(path, Astro.site ?? 'https://nordlys-gp.example').href} />
+    <link rel="icon" href={`${base}/favicon.svg`} type="image/svg+xml" />
+    <link rel="preload" as="font" type="font/woff2" href={`${base}/fonts/anton.woff2`} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={`${base}/fonts/archivo.woff2`} crossorigin />
+    <style is:global set:html={`
+      @font-face { font-family: 'Anton'; src: url('${base}/fonts/anton.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+      @font-face { font-family: 'Archivo'; src: url('${base}/fonts/archivo.woff2') format('woff2'); font-weight: 100 900; font-display: swap; }
+      @font-face { font-family: 'JetBrains Mono'; src: url('${base}/fonts/jetbrains-mono.woff2') format('woff2'); font-weight: 100 800; font-display: swap; }
+    `}></style>
+    <script is:inline>
+      // Tier before first paint so CSS can branch; the full detector runs in site.ts.
+      (function () {
+        var d = document.documentElement; d.classList.add('js');
+        var n = navigator, reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var mem = n.deviceMemory || 8, cores = n.hardwareConcurrency || 8, save = !!(n.connection && n.connection.saveData);
+        var coarse = matchMedia('(pointer: coarse)').matches;
+        d.dataset.tier = (reduce || save || mem <= 2 || cores <= 2) ? 'low' : (mem <= 4 || cores <= 4 || coarse) ? 'mid' : 'high';
+      })();
+    </script>
+    <ClientRouter />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <Header path={path} base={base} />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+    <div class="cursor" data-cursor aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+    <script src="../scripts/site.ts"></script>
+  </body>
+</html>

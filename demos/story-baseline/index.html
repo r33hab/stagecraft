@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Halde 8 — a restored cine camera</title>
+<meta name="description" content="Halde 8: an 8 mm cine camera from 1958, restored by hand in Oslo, twelve at a time. Fictional product; 3D model CC0.">
+<meta name="theme-color" content="#0c0b0a">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
+</head>
+<body>
+<div id="loader" aria-live="polite"><div class="leader"><svg viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="92"/><circle cx="100" cy="100" r="62"/><path d="M100 0V200M0 100H200"/></svg><b id="leadnum">8</b></div><p>Threading the film <span id="loadpct">0</span>%</p></div>
+
+<canvas id="stage" aria-hidden="true"></canvas>
+<div class="glow" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+<div class="flicker" id="flicker" aria-hidden="true"></div>
+
+<div class="hud" aria-hidden="true">
+  <i class="vf tl"></i><i class="vf tr"></i><i class="vf bl"></i><i class="vf br"></i>
+  <div class="hud-tl">HALDE <b>8</b></div>
+  <div class="hud-tr"><span id="hudfps">16 fps</span><span id="hudframe">000000</span></div>
+  <div class="hud-bl"><span id="hudchap">01 / 06</span> <em id="hudname">1958</em></div>
+  <div class="strip" id="strip"><span class="ft" id="hudft">25 ft</span><div class="gauge"><u id="gaugefill"></u></div></div>
+</div>
+
+<main id="story">
+
+<section class="chap" data-side="l">
+  <div class="panel"><div class="copy">
+    <p class="kicker"><span>01</span> Chapter</p>
+    <h1><span class="mask"><span>1958</span></span></h1>
+    <p class="lead">Built in a workshop in Oslo in 1958, the year 8&nbsp;mm film came home. Clockwork drive, no battery, sixteen frames a second.</p>
+    <p class="hint">Halde 8 &mdash; a restored cine camera <span class="scroll">Scroll</span></p>
+  </div></div>
+</section>
+
+<section class="chap" data-side="r">
+  <div class="panel"><div class="copy">
+    <p class="kicker"><span>02</span> Chapter</p>
+    <h2><span class="mask"><span>The turret</span></span></h2>
+    <p class="lead">Three lenses on one turret: 13&nbsp;mm wide, 25&nbsp;mm normal, 38&nbsp;mm tele. Turn it with your thumb; the viewfinder turns with it.</p>
+    <ul class="lenses" id="lenses"><li>13 mm <small>wide</small></li><li>25 mm <small>normal</small></li><li>38 mm <small>tele</small></li></ul>
+  </div></div>
+</section>
+
+<section class="chap" data-side="l">
+  <div class="panel"><div class="copy">
+    <p class="kicker"><span>03</span> Chapter</p>
+    <h2><span class="mask"><span>Wind it</span></span></h2>
+    <p class="lead">Twelve turns of the key run 25 feet of film: about two minutes of light, one shot at a time.</p>
+    <div class="wind">
+      <svg viewBox="0 0 120 120" class="dial" aria-hidden="true"><circle cx="60" cy="60" r="54" class="ring"/><g id="ticks"></g><path id="needle" d="M60 60 L60 14" /><circle cx="60" cy="60" r="5" class="hub"/></svg>
+      <dl><div><dt>Turns</dt><dd><b id="wturns">0</b> / 12</dd></div><div><dt>Film</dt><dd><b id="wft">0</b> / 25 ft</dd></div><div><dt>Light</dt><dd><b id="wtime">0:00</b></dd></div></dl>
+    </div>
+  </div></div>
+</section>
+
+<section class="chap" data-side="r">
+  <div class="panel"><div class="copy">
+    <p class="kicker"><span>04</span> Chapter</p>
+    <h2><span class="mask"><span>Taken apart</span></span></h2>
+    <p class="lead">Each camera comes to the bench in pieces: 41 parts, cleaned, measured and drawn before anything is replaced.</p>
+    <div class="parts"><b id="pcount">0</b><span>/ 41 parts<br>cleaned, measured, drawn</span></div>
+  </div></div>
+</section>
+
+<section class="chap" data-side="l">
+  <div class="panel"><div class="copy">
+    <p class="kicker"><span>05</span> Chapter</p>
+    <h2><span class="mask"><span>Rebuilt</span></span></h2>
+    <p class="lead">New seals, a serviced spring, the original glass. It leaves the bench only when it runs at sixteen frames a second, steady, for a full roll.</p>
+    <div class="test"><span>Bench test</span><div class="bar"><u id="tbar"></u></div><span id="tlabel">16.0 fps</span></div>
+  </div></div>
+</section>
+
+<section class="chap" data-side="r">
+  <div class="panel"><div class="copy">
+    <p class="kicker"><span>06</span> Chapter</p>
+    <h2><span class="mask"><span>Rolling</span></span></h2>
+    <p class="lead">Twelve cameras a year. Each one goes out with a roll of film and a promise: we service it for life.</p>
+    <ol class="twelve" id="twelve" aria-hidden="true"></ol>
+  </div></div>
+</section>
+
+<section class="specs-sec" id="specs">
+  <div class="panel">
+    <h2 class="sr">Specifications</h2>
+    <ul class="specs" id="speclist">
+      <li><span>Film</span>double 8 mm</li>
+      <li><span>Speeds</span>12, 16, 24, 32 fps</li>
+      <li><span>Lenses</span>13, 25, 38 mm f/1.9</li>
+      <li><span>Drive</span>clockwork, 25 ft per wind</li>
+      <li><span>Weight</span>1.1 kg</li>
+      <li><span>Made</span>Oslo, 1958 / restored 2027</li>
+    </ul>
+  </div>
+</section>
+
+<section class="ending" id="join">
+  <div class="end-in">
+    <p class="kicker"><span>Fin</span> The next twelve</p>
+    <h2>Join the list</h2>
+    <p class="lead">The waiting list for the next twelve cameras.</p>
+    <form id="form" novalidate>
+      <label for="email" class="sr">Email address</label>
+      <input id="email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" required>
+      <button type="submit">Join the list</button>
+    </form>
+    <p class="msg" id="msg" role="status"></p>
+    <p class="price"><b>NOK 14 800</b>, including the first roll</p>
+    <p class="fine">Halde is fictional, and the model is CC0.</p>
+    <p class="credit">3D model &ldquo;Vintage Video Camera&rdquo; by Jenelle van Heerden and James Ray Cock, and the studio HDRI, both from <a href="https://polyhaven.com" rel="noopener">Poly Haven</a> (CC0).</p>
+  </div>
+</section>
+</main>
+
+<script type="module" src="main.js"></script>
+</body>
+</html>

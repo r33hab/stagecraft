@@ -1,0 +1,90 @@
+---
+import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import { repo, version, doors } from '../data/site';
+interface Props { title: string; description: string; slug?: string }
+const { title, description, slug = '' } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const cur = (s: string) => (s === slug ? 'page' : undefined);
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#f2f0ea" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site ?? 'https://r33hab.github.io').href} />
+    <link rel="icon" href={`${base}/favicon.svg`} type="image/svg+xml" />
+    <link rel="preload" as="font" type="font/woff2" href={`${base}/fonts/inter-tight.woff2`} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={`${base}/fonts/instrument-serif.woff2`} crossorigin />
+    <style is:global set:html={`
+      @font-face { font-family: 'Inter Tight'; src: url('${base}/fonts/inter-tight.woff2') format('woff2'); font-weight: 100 900; font-display: swap; }
+      @font-face { font-family: 'Instrument Serif'; src: url('${base}/fonts/instrument-serif.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+      @font-face { font-family: 'JetBrains Mono'; src: url('${base}/fonts/jetbrains-mono.woff2') format('woff2'); font-weight: 100 800; font-display: swap; }
+      @font-face { font-family: 'Inter Tight Fallback'; src: local('Arial'); size-adjust: 97%; ascent-override: 92%; descent-override: 24%; line-gap-override: 0%; }
+    `}></style>
+    <script is:inline data-astro-rerun>
+      (function () {
+        var d = document.documentElement; d.classList.add('js');
+        var n = navigator, reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var mem = n.deviceMemory || 8, cores = n.hardwareConcurrency || 8, save = !!(n.connection && n.connection.saveData);
+        var coarse = matchMedia('(pointer: coarse)').matches;
+        d.dataset.tier = (reduce || save || mem <= 2 || cores <= 2) ? 'low' : (mem <= 4 || cores <= 4 || coarse) ? 'mid' : 'high';
+      })();
+    </script>
+    <ClientRouter />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="top" data-top>
+      <a class="top__brand" href={`${base}/`} aria-current={cur('home')}><b>v{version}</b> stagecraft</a>
+      <nav class="top__nav" aria-label="Primary">
+        {doors.map((d, i) => <a href={`${base}/${d.slug}/`} aria-current={cur(d.slug)}><span class="top__n">0{i + 1}</span>{d.name}</a>)}
+        <a class="top__cta" href={`${base}/#install`}>Install</a>
+      </nav>
+      <button class="top__menu" type="button" data-menu-button aria-expanded="false" aria-controls="menu-panel"><span class="top__lines" aria-hidden="true"><i></i><i></i></span><span data-menu-label>Menu</span></button>
+    </header>
+
+    <div id="menu-panel" class="menu" hidden data-menu>
+      <div class="menu__bg" data-menu-bg></div>
+      <div class="menu__inner">
+        <div class="menu__top" data-menu-item><span class="menu__brand">stagecraft</span><button class="menu__close" type="button" data-menu-close>Close</button></div>
+        <nav aria-label="Menu">
+          <ol class="menu__list">
+            <li data-menu-item><a href={`${base}/`} data-menu-link aria-current={cur('home')}><span class="menu__n">00</span><span class="menu__name">Home</span><span class="menu__promise">The stage, the questions, the doors.</span></a></li>
+            {doors.map((d, i) => (
+              <li data-menu-item><a href={`${base}/${d.slug}/`} data-menu-link aria-current={cur(d.slug)}><span class="menu__n">0{i + 1}</span><span class="menu__name">{d.name}</span><span class="menu__promise">{d.title}</span></a></li>
+            ))}
+          </ol>
+        </nav>
+        <div class="menu__foot" data-menu-item>
+          <a class="link-arrow" href={`${base}/#install`} data-menu-link>Install</a>
+          <a class="link-arrow" href={repo} rel="noopener">GitHub</a>
+          <span class="label">v{version} · MIT</span>
+        </div>
+      </div>
+    </div>
+
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <footer class="foot" id="footer" data-theme="ink">
+      <p class="foot__statement" data-reveal>Build the static frame first. Then make it move.</p>
+      <div class="foot__grid">
+        <div><p class="label">Site</p>{doors.map((d) => <a href={`${base}/${d.slug}/`}>{d.name}</a>)}<a href={`${base}/#install`}>Install</a></div>
+        <div><p class="label">Skill</p><a href={repo} rel="noopener">Source on GitHub</a><a href={`${repo}/blob/main/SKILL.md`} rel="noopener">SKILL.md</a><a href={`${repo}/tree/main/references`} rel="noopener">References</a></div>
+        <div><p class="label">Suite</p><a href={`${repo}/tree/main/assets/tests`} rel="noopener">Playwright suite</a><a href={`${repo}/blob/main/scripts/add-tests.mjs`} rel="noopener">add-tests.mjs</a><a href={`${repo}/blob/main/scripts/check-budgets.mjs`} rel="noopener">check-budgets.mjs</a></div>
+        <div><p class="label">Made by</p><a href="https://github.com/r33hab" rel="noopener">r33hab</a><p style="margin-top:.5rem;color:var(--fg-muted)">MIT licence</p></div>
+      </div>
+      <p class="foot__legal"><span>© {new Date().getFullYear()} r33hab.</span><span>This site was built with the skill it describes: Astro, GSAP, Lenis, view transitions, and its own test suite.</span><span>The camera in the hero is "Vintage Video Camera" by Jenelle van Heerden and James Ray Cock, lit by a studio HDRI, both from Poly Haven (CC0).</span></p>
+    </footer>
+    <div class="cursor" data-cursor aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+    <script src="../scripts/site.ts"></script>
+  </body>
+</html>

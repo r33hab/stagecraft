@@ -1,6 +1,6 @@
 # Typography
 
-Type carries most of the design on sites that win. The pattern in the studied winners is stable:
+Type carries most of the design on sites of this calibre. The pattern is stable:
 one or two families, rarely three; a self-hosted grotesk as the workhorse; a serif or a mono as the
 accent; a variable font where weight animates; display sizes in `vw` or `clamp()`; and metadata in
 mono caps with tracking. Default system fonts and the usual "AI" picks (Inter at 400 for everything,
@@ -15,8 +15,9 @@ Roboto, Poppins) read as unconsidered; Inter is fine only as a deliberate produc
 | Mono (metadata, labels, specs) | 0 or 1 | Geist Mono, JetBrains Mono, IBM Plex Mono, Space Mono, Fragment Mono | GT America Mono / Replica Mono style |
 | Variable for kinetic axes | 1 | Fraunces, Roboto Flex, Inter (opsz, wght), Bricolage Grotesque | any with `wght` and `wdth` axes |
 
-Pairing rules that held across winners:
-- Grotesk + serif accent (one line per page in the serif) is the editorial pairing.
+Pairing rules that hold:
+- Grotesk + serif is the editorial pairing when each sets whole roles: the serif the headings or the
+  long text, the grotesk the rest. Never one phrase of a grotesk headline swapped into the serif.
 - Grotesk + mono is the technical pairing.
 - Condensed caps display + plain sans is the poster pairing.
 - Serif display + light grotesk is the luxury pairing.
@@ -63,10 +64,11 @@ every size as a multiple of `--s`, clamped at both ends, so the composition scal
 - Astro and Next both have font pipelines (`astro:assets` fonts API, `next/font`) that subset and
   generate fallback metrics; use them instead of manual `@font-face` when available.
 
-## Rules the jury notices
+## Rules reviewers notice
 
-- Headings are roman; emphasis by weight or the accent colour, not italics, unless the direction is
-  Editorial or Luxe and the italic is the serif's own.
+- A heading is one family, one colour, roman: emphasis by size, weight or a line break. The headline
+  in a grotesk with its last phrase in an italic serif and the accent colour is the most recognisable
+  generated-landing tell; high-end sites hold one typographic voice per line.
 - Caps labels have tracking; lowercase labels do not.
 - One size for all body copy; hierarchy comes from weight and space, not six sizes.
 - Numbers in tables and stats use `font-variant-numeric: tabular-nums`.

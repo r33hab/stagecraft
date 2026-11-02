@@ -1,0 +1,58 @@
+---
+import Base from '../layouts/Base.astro';
+import Preview from '../components/Preview.astro';
+import { person, work } from '../data/work';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<Base title="Mira Solberg · Design engineer, Oslo" description="Mira Solberg is a design engineer in Oslo who builds interfaces and motion systems for product companies. Eight projects, three principles, available from March 2027.">
+  <section class="chapter statement" aria-labelledby="statement">
+    <p class="label" data-reveal>{person.since}</p>
+    <h1 class="statement__text" id="statement" data-reveal>I build the part of the product people actually touch: <em>the interface, the motion, the details that make it feel finished.</em></h1>
+    <div class="statement__meta label" data-reveal><span>{person.title}</span><span>{person.city}</span><span>Available from {person.available}</span></div>
+  </section>
+
+  <section class="chapter" id="work" aria-labelledby="work-title">
+    <h2 class="work__title" id="work-title"><span>Work</span><span class="work__count">(0{work.length})</span></h2>
+    <div class="work__bar">
+      <p class="label">Eight products, 2023 to 2026. Hover a row for the interface; tap on a phone.</p>
+      <div class="toggle" role="group" aria-label="View">
+        <button type="button" data-view="list" aria-pressed="true">List</button>
+        <button type="button" data-view="grid" aria-pressed="false">Grid</button>
+      </div>
+    </div>
+    <div class="index__head" aria-hidden="true"><span>#</span><span>Project</span><span>Client</span><span>Role</span><span style="text-align:right">Year</span></div>
+    <div class="index" data-index data-reveal data-reveal-group>
+      {work.map((p) => (
+        <a class="row" href={p.slug === 'ledger' ? `${base}/work/ledger/` : `${base}/#contact`} data-row={p.slug} data-kind={p.kind} data-accent={p.accent}>
+          <span class="row__n" transition:name={`num-${p.n}`}>{p.n}</span>
+          <span><span class="row__title">{p.title}</span><span class="row__line">{p.line}</span>{p.slug !== 'ledger' && <span class="row__ask label">Case study on request</span>}</span>
+          <span class="row__client">{p.client}</span>
+          <span class="row__role">{p.role}</span>
+          <span class="row__year">{p.year}</span>
+          <Preview kind={p.kind} accent={p.accent} title={p.title} />
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="chapter" id="about" data-theme="ink" aria-labelledby="about-title">
+    <div class="chapter__head"><span>About</span></div>
+    <div class="about">
+      <div>
+        <h2 class="row__title" id="about-title" data-reveal style="font-size:var(--text-2xl);margin-bottom:1rem">Design engineer, which means the hand-off is me.</h2>
+        <p data-reveal>{person.since} Tools: {person.tools} {person.aside}</p>
+      </div>
+      <ol class="principles" data-reveal data-reveal-group>{person.principles.map((p) => <li>{p}</li>)}</ol>
+    </div>
+  </section>
+
+  <section class="chapter" id="contact" aria-labelledby="contact-title">
+    <div class="chapter__head"><span>Contact</span></div>
+    <h2 class="label" id="contact-title" data-reveal style="margin-bottom:1rem">Available from {person.available}</h2>
+    <a class="contact__mail" href={`mailto:${person.email}`} data-reveal>{person.email}</a>
+    <div class="contact__links" data-reveal>
+      <a class="pill" role="link" aria-disabled="true" title="Mira is fictional">GitHub</a>
+      <a class="pill" role="link" aria-disabled="true" title="Mira is fictional">LinkedIn</a>
+    </div>
+  </section>
+</Base>

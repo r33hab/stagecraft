@@ -1,6 +1,6 @@
 # Colour
 
-Winners use fewer colours than they appear to: near-black and near-white, one accent, warm greys,
+High-end sites use fewer colours than they appear to: near-black and near-white, one accent, warm greys,
 and then the *media* supplies the colour. Chapter-shift sites change the whole palette per chapter
 but still obey the one-accent rule inside each chapter.
 
@@ -36,7 +36,13 @@ can be rotated by hue for variations.
 Every colour in components references a semantic token. A raw value inside a component is a bug:
 it breaks chapter themes and dark mode at once.
 
-## Palettes that carried award-level sites
+One trap: a derived token (`--fg-muted`, `--line`) declared on `:root` is computed with the
+`:root` value of `--fg`, not the chapter's. Inside a `[data-theme="paper"]` chapter the muted text
+then stays "64 % of the dark-theme foreground" and vanishes on paper. Declare derived tokens on
+every scope that redefines the base, e.g. `:root, [data-theme] { --fg-muted: color-mix(...) }`,
+placed after the theme blocks, so each chapter recomputes them from its own `--fg`.
+
+## Palettes seen on high-end sites
 
 | Name | bg | fg | accent | Notes |
 |---|---|---|---|---|

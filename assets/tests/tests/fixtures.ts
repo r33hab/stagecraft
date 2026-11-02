@@ -6,6 +6,8 @@ export type Budgets = {
   baseURL?: string;
   preview?: string;
   routes: string[];
+  /** Intake Q8: 'all' (default) gates every budget on mobile-low; 'desktop-first' makes the mobile perf budgets warn. */
+  platform?: 'all' | 'desktop-first' | 'phone-first';
   budgets: {
     lcpMs: number; cls: number; longTaskTotalMs: number; longTaskMaxMs: number; frameP95Ms: number;
     scriptKb: number; lazyChunkKb: number; cssKb: number; fontKb: number; fontFiles: number; fontFamilies: number;
