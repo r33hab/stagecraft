@@ -1,0 +1,7 @@
+schema_version: "1.1"
+name: launch-page-expressive
+expected_outcome: |
+  A concept, direction and signature moment are stated before code. The site is a static build
+  (Astro or Vite), has a static-first hero with real copy from copy.md, device tiering, reduced
+  motion handling, no custom cursor on touch, 100svh hero, and the stagecraft test suite installed
+  with budgets. Delivery note lists scores, budget numbers and open items.

@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: add-tests-existing-site
+expected_outcome: |
+  The suite is installed with add-tests.mjs, budgets routes and preview command are set, the
+  production build is tested (not the dev server), failures are fixed in the site (not by loosening
+  budgets without a stated reason), and the design is left intact.

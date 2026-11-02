@@ -1,0 +1,7 @@
+schema_version: "1.1"
+name: portfolio-variations
+expected_outcome: |
+  Three contrasting directions are presented as six-line static hero sketches (surface and colour,
+  the exact headline, hero object placement, the signature moment, the phone version, cost tier)
+  before any code, with one recommended; they differ on at least three remix axes; no framework
+  question is asked of the user.
