@@ -30,8 +30,9 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     video: 'off',
   },
+  // Ready when the first route answers, not the bare origin: a site under a base path (GitHub Pages) is a 404 at /.
   webServer: cfg.preview && !process.env.BASE_URL
-    ? { command: cfg.preview, url: baseURL, reuseExistingServer: true, timeout: 120_000 }
+    ? { command: cfg.preview, url: new URL(cfg.routes?.[0] ?? '/', baseURL).href, reuseExistingServer: true, timeout: 120_000 }
     : undefined,
   projects: [
     {
