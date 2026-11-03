@@ -70,6 +70,10 @@ configurable in the budgets file.
 }
 ```
 
+`lazyChunks` are patterns for the file names of chunks that load after first paint: the static
+check (`check-budgets.mjs`) cannot see a dynamic `import()`, so a lazy chunk it does not match counts
+as initial script. A three.js stage in `stage.ts` builds to `stage.<hash>.js`: add `"^stage\\."`.
+
 Loosen a budget only with a reason in the commit message. The perf spec prints a table of every
 measured value so the numbers go into the delivery note.
 

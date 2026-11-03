@@ -39,6 +39,7 @@
   "ignoreRequests": [],
   "ignoreConsole": [],
   "lazyChunks": [
+    "^stage\\.",
     "three",
     "scene",
     "webgl",
