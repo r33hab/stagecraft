@@ -118,7 +118,9 @@ html[data-tier="low"] .stage__wrap, .is-static .stage__wrap { position: static; 
 .table td { padding: .8rem .8rem .8rem 0; border-bottom: 1px solid var(--line); vertical-align: top; }
 .table td:first-child { font-family: var(--font-mono); white-space: nowrap; }
 .table .muted { color: var(--fg-muted); }
-@media (max-width: 640px) { .table .hide-sm { display: none; } }
+/* on a phone the pattern names wrap: kept on one line, a mono name pushed a 320 px page 6 px wide with Linux font metrics */
+@media (max-width: 640px) { .table .hide-sm { display: none; } .table td:first-child { white-space: normal; overflow-wrap: break-word; } }
+.cmp__table td:not(:first-child) { white-space: nowrap; }   /* a value (68 / 68, 16.7 ms) stays on one line */
 
 /* Install */
 .install { display: grid; grid-template-columns: 1fr 1.2fr; gap: 2rem; align-items: start; }
