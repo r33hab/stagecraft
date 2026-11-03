@@ -51,7 +51,7 @@ scripts/
   film.mjs               films a page as seamless video loops at two sizes plus a poster (needs ffmpeg)
 evals/                   example prompts for skill testing
 site/                    the skill's site (GitHub Pages), built with the skill
-demos/                   three briefs built twice: with the skill, and without it by a smaller model
+demos/                   three briefs built twice by the same model from the same brief: with the skill, and without it
 ```
 
 ## The test suite on its own

@@ -1,7 +1,7 @@
 # Demo briefs
 
-Each demo exists twice: once built with the stagecraft skill, once built by a smaller model from
-the same brief with no skill, no extra guidance and the same constraints. The briefs below are the
+Each demo exists twice, built by the same model from the same brief and the same constraints:
+once with the stagecraft skill, once without it (no skill, no extra guidance). The briefs below are the
 complete input for both. Content is fictional and shared between the two arms so the comparison
 is about craft, motion, performance and accessibility, not about copy.
 

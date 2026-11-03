@@ -66,7 +66,7 @@ export const doors = [
   { slug: 'method', name: 'Method', title: 'The order that keeps motion honest', promise: 'Static frame, device tiers, the motion layer, media after paint, chrome, then tests and a critique. Six steps that keep a site fast while it gets ambitious.', meta: '6 steps' },
   { slug: 'directions', name: 'Directions', title: 'Sixteen recipes, side by side', promise: 'From Monolith to Quiet: surface, type, colour, layout, motion signature, hero and mobile translation for each, plus the remix axes that make hundreds more.', meta: '16 directions' },
   { slug: 'suite', name: 'Suite', title: 'The review checklist as assertions', promise: 'Seven specs across five browser projects, run against the production build, with the budgets this site is held to and its own numbers.', meta: '7 specs · 19 budgets' },
-  { slug: 'compare', name: 'Compare', title: 'Three briefs, built twice', promise: 'The same brief with the skill and without it, by a smaller model, measured by the same suite and shown side by side.', meta: '3 pairs, measured' },
+  { slug: 'compare', name: 'Compare', title: 'Three briefs, built twice', promise: 'The same brief and the same model, with the skill and without it, measured by the same suite and shown side by side.', meta: '3 pairs, measured' },
 ];
 
 // The example sites the skill built, filmed as loops for the docked frame on the landing (public/reel/).
