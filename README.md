@@ -13,7 +13,21 @@ desktop, a throttled low-end Android profile, iPhone WebKit, Firefox and reduced
 
 ## Install
 
-Copy or symlink this folder into your skills directory:
+In Claude Code (2.1.275 or later), one command:
+
+```
+/plugin install stagecraft --marketplace r33hab/stagecraft
+```
+
+On older versions, run `/plugin marketplace add r33hab/stagecraft`, then `/plugin install stagecraft@r33hab`.
+
+With npx, for Claude Code or any other agent the [skills CLI](https://github.com/vercel-labs/skills) supports:
+
+```bash
+npx skills add r33hab/stagecraft -g -a claude-code
+```
+
+Or clone it into your skills folder:
 
 ```bash
 git clone https://github.com/r33hab/stagecraft ~/.claude/skills/stagecraft
@@ -56,7 +70,8 @@ demos/                   three briefs built twice by the same model, prompt and 
 
 ## The test suite on its own
 
-The suite works on any site, not only ones built with the skill:
+The suite works on any site, not only ones built with the skill. In Claude Code, say "stagecraft test"
+in the project and the skill wires it in. By hand, from a clone in `~/.claude/skills/stagecraft`:
 
 ```bash
 node ~/.claude/skills/stagecraft/scripts/add-tests.mjs . --base http://localhost:4321 --preview "npm run preview" --routes "/,/work"

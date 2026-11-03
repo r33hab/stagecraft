@@ -175,12 +175,14 @@ const drives = ['drives the story shape and the end action', 'drives the stack: 
     <div class="chapter__head"><span>03 · Install</span></div>
     <div class="install">
       <div>
-        <h2 class="h2" id="install-title" data-reveal>Two commands</h2>
-        <p class="lede" data-reveal>Clone into your skills folder, then ask for a site in plain words. The suite can also be dropped into an existing project on its own.</p>
+        <h2 class="h2" id="install-title" data-reveal>One command</h2>
+        <p class="lede" data-reveal>Install it in Claude Code, then ask for a site in plain words. The suite can also be dropped into an existing project on its own.</p>
       </div>
       <div data-reveal data-reveal-group>
         <p class="label" style="margin-bottom:.5rem">Install the skill</p>
-        <pre tabindex="0"><code>git clone {repo} ~/.claude/skills/stagecraft</code></pre>
+        <pre tabindex="0"><code>/plugin install stagecraft --marketplace r33hab/stagecraft</code></pre>
+        <p class="label" style="margin:1.25rem 0 .5rem">Or with npx</p>
+        <pre tabindex="0"><code>npx skills add r33hab/stagecraft -g -a claude-code</code></pre>
         <p class="label" style="margin:1.25rem 0 .5rem">Add the suite to any project</p>
         <pre tabindex="0"><code>node ~/.claude/skills/stagecraft/scripts/add-tests.mjs . \
   --base http://localhost:4321 --preview "npm run preview" --routes "/,/work"

@@ -1,0 +1,9 @@
+{
+  "name": "stagecraft",
+  "description": "Award-calibre, animated, scroll-driven websites that still run smoothly on low-end phones, with a bundled Playwright suite that enforces the budgets.",
+  "author": { "name": "r33hab" },
+  "homepage": "https://r33hab.github.io/stagecraft/",
+  "repository": "https://github.com/r33hab/stagecraft",
+  "license": "MIT",
+  "keywords": ["web design", "scroll animation", "motion", "playwright", "performance", "accessibility"]
+}

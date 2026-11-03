@@ -1,0 +1,12 @@
+{
+  "name": "r33hab",
+  "description": "Claude Code skills by r33hab",
+  "owner": { "name": "r33hab" },
+  "plugins": [
+    {
+      "name": "stagecraft",
+      "source": "./",
+      "description": "Directed, scroll-driven storytelling sites, tested like software."
+    }
+  ]
+}
