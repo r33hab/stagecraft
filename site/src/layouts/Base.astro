@@ -56,7 +56,7 @@ const cur = (s: string) => (s === slug ? 'page' : undefined);
         <div class="menu__top" data-menu-item><span class="menu__brand">stagecraft</span><button class="menu__close" type="button" data-menu-close>Close</button></div>
         <nav aria-label="Menu">
           <ol class="menu__list">
-            <li data-menu-item><a href={`${base}/`} data-menu-link aria-current={cur('home')}><span class="menu__n">00</span><span class="menu__name">Home</span><span class="menu__promise">The stage, the questions, the doors.</span></a></li>
+            <li data-menu-item><a href={`${base}/`} data-menu-link aria-current={cur('home')}><span class="menu__n">00</span><span class="menu__name">Home</span><span class="menu__promise">The stage, the proof, the doors.</span></a></li>
             {doors.map((d, i) => (
               <li data-menu-item><a href={`${base}/${d.slug}/`} data-menu-link aria-current={cur(d.slug)}><span class="menu__n">0{i + 1}</span><span class="menu__name">{d.name}</span><span class="menu__promise">{d.title}</span></a></li>
             ))}
