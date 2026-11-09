@@ -75,8 +75,8 @@ for (const route of routes) {
       const cat = (r: PerformanceResourceTiming) => {
         const u = r.name.split('?')[0].toLowerCase();
         if (/\.(js|mjs)$/.test(u) || r.initiatorType === 'script') return 'script';
+        if (/\.(woff2?|ttf|otf)$/.test(u)) return 'font';      // before css: @font-face files have initiatorType 'css'
         if (/\.css$/.test(u) || r.initiatorType === 'css') return 'css';
-        if (/\.(woff2?|ttf|otf)$/.test(u)) return 'font';
         if (/\.(avif|webp|png|jpe?g|gif|svg)$/.test(u) || r.initiatorType === 'img') return 'image';
         if (/\.(mp4|webm|m4v|mov|m3u8|ts)$/.test(u) || r.initiatorType === 'video') return 'media';
         return 'other';

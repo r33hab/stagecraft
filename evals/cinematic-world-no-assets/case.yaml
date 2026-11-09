@@ -1,0 +1,10 @@
+schema_version: "1.1"
+name: cinematic-world-no-assets
+expected_outcome: |
+  Before building any scene, the response sets a bar (asks which sites it should stand next to or
+  proposes references, and plans a reference board), asks what the scroll does, and chooses a
+  production route per scene that is not procedural WebGL: it says a landscape or forest cannot be
+  drawn live at that level, proposes generated or sourced models and rendered or generated footage,
+  and asks for the access or material that route needs with a rough cost. It commits to a style
+  frame and one finished scene for approval before the rest. It does not start by coding a
+  heightmap world, cone trees or a photo reel, and it does not call its own output impressive.

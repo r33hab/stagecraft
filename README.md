@@ -8,7 +8,9 @@ motion goes, a feel, what is worth showing, how people move through it, what the
 decides the stack itself, picks one of sixteen design directions (or remixes a new one) and one
 object to carry through every chapter, builds the static frame first, then the motion layer with
 measured numbers for transitions, text reveals and reading time, device tiering and reduced-motion
-handling. It then watches the result frame by frame at reading pace and runs a test suite across
+handling. For cinematic and 3D briefs it first sets a bar (a board of reference frames), picks how
+each scene's frames get made, asks for the access that needs, and stops for a yes on one style frame
+and one finished scene before building the rest. It then watches the result frame by frame at reading pace and runs a test suite across
 desktop, a throttled low-end Android profile, iPhone WebKit, Firefox and reduced motion.
 
 ## Install
@@ -42,6 +44,7 @@ https://…", or "stagecraft test".
 SKILL.md                 the flow: intake, concept, stack, tokens, story, build order, test, critique
 references/
   intake.md              questions nobody can answer wrong, what material exists, answer-to-stack tables
+  production.md          the bar and the route: reference board, how each scene's frames get made (real, generated, rendered, filmed), what a browser cannot draw live, style-frame and vertical-slice gates, asking for access
   craft.md               the numbers: carrier, chapter edges, text reveal and hold, pins, horizontal, loaders, easing, 3D craft
   directions.md          sixteen directions with tokens, motion signatures, mobile translations; remix axes
   story.md               the scroll-narrative grammar: gate, statement, chapters, transitions, ending
@@ -62,6 +65,7 @@ scripts/
   add-tests.mjs          installs the suite into a project and wires npm scripts
   check-budgets.mjs      static gzip weight check on a build output
   frames.mjs             watches a page at reading pace: contact sheets, a text timeline, a reading verdict
+  board.mjs              captures reference frames from public sites; pairs your frame with a reference at full size
   film.mjs               films a page as seamless video loops at two sizes plus a poster (needs ffmpeg)
 evals/                   example prompts for skill testing
 site/                    the skill's site (GitHub Pages), built with the skill

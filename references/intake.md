@@ -110,7 +110,7 @@ filled; motion moves the material and cannot stand in for it.
 | **Photography or illustration** | a shoot, a library, commissioned art, at least a dozen strong frames | builds the chapters on the images: full bleed to card, collage at three depths, masks, windows; asks for the originals, never stock |
 | **The product or a model of it** | the object itself to photograph, a GLB, a scan or CAD export, or a CC0 scan of the same kind of object | `assets/runtime/hero-scene.ts` loads it under studio light as the carrier; or it is rendered once and shipped as a loop or a baked image sequence (`stack.md`, "Sourcing assets") |
 | **Footage or the work itself** | video, a product demo, pages or an app that can be recorded | `scripts/film.mjs` films the pages as seamless loops; the clips play inside a frame that is the carrier, or full bleed when filmed text-free (`stack.md`, "Filming the work") |
-| **Nothing yet** | no imagery exists | the skill works with what can be made honestly: the work drawn (a wireframe that becomes the finished page, line art that draws itself), type at display scale over a strong colour system, CC0 scans when the subject is a physical thing; it never builds the subject from primitives and never invents imagery that pretends to be the client's |
+| **Nothing yet** | no imagery exists | first the route question (`production.md`): a generated model or generated footage of the subject, with the person's go and a key, or a CC0 scan of the same kind of object. Without those, the skill works with what can be made honestly: the work drawn (a wireframe that becomes the finished page, line art that draws itself), type at display scale over a strong colour system, CC0 scans when the subject is a physical thing; it never builds the subject from primitives and never invents imagery that pretends to be the client's |
 
 Then three rules that follow from the answer, whatever it is (numbers in `craft.md`):
 
@@ -134,6 +134,38 @@ version on phones.
 | **On a computer** | a showcase, a tool or a studio site most people open at a desk | the full experience on desktop (WebGL scenes, longer pins, hover); phones get a composed version with the same copy and the same page map (still frames, shorter stages, no heavy scene); the budgets file says `"platform": "desktop-first"`, so the mobile-low perf budgets warn instead of failing; accessibility, reading time and layout on phones still gate |
 | **Everywhere, about equally** (default) | most marketing and story sites | one design that works on both; every budget gates on mobile-low as written in `performance.md` |
 | **Mostly on phones** | a campaign shared on social, an event, a product people meet on the go | design at 390 px first, touch gestures before hover, no pinned horizontal sections, WebGL only as a poster or video; budgets as written, and the desktop layout is the phone design given room |
+
+### Q9. Which sites should it stand next to?
+
+Ask it when Q3 is Cinematic, the brief mentions 3D, or it says award, wow or "like the winning
+ones". The answer is the bar the result is judged against at every gate (`production.md`).
+
+| Option | Means | The skill then does |
+|---|---|---|
+| **These ones** (the person names one to three sites) | a concrete bar | captures frames from them with `scripts/board.mjs`, writes `docs/bar.md`, pairs its own frames with them at each gate |
+| **Show me three** | no reference in mind | proposes three public sites by what they do (a product on a studio set; small art-directed scenes with designed transitions; one scrubbed film), captures a frame of each, lets the person pick |
+| **No reference, use your judgment** | trusts the skill | picks two from `field-notes.md` that fit the subject, says which, and still builds the board |
+
+### Q10. What does the scroll do?
+
+Ask it with Q9. "Cinematic" alone is read three ways, and the wrong reading costs the whole build.
+
+| Option | Means | Drives |
+|---|---|---|
+| **Travels between scenes** (recommended for several subjects) | a few compact scenes, each a stop where something is shown or taken apart, joined by designed moves | scenes live only where the visitor operates something; moves as image sequences or covered camera moves; the scroll always in control |
+| **Turns one object** | one product or machine on stage from start to end | `hero-scene.ts`, shots per chapter, an exploded view |
+| **Plays a film** | footage or a render, the scroll is the timeline | image sequence in memory, copy as lower thirds |
+
+A photo reel with copy swaps is none of these: when the brief says 3D or animation, do not answer
+it with stills.
+
+### Tools and access
+
+After Q7, Q9 and Q10 the route is known (`production.md`, section 2). If it needs something the
+session lacks (a key for a 3D or video generation service, the client's photographs, a
+manufacturer's model), say so now in one message: what it is for, a free alternative and what that
+costs in fidelity, a rough price, and where the key goes (an environment variable, never the chat).
+Wait for the answer. The one thing never to do is start building the cheap version unasked.
 
 ## From answers to decisions
 

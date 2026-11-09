@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-11-09
+### Added
+- `references/production.md` and step 1b of the build flow: for Cinematic, 3D and award briefs the skill now sets a bar (a board of reference frames), picks a production route per scene (real or generated models, offline or generated footage, live WebGL only for what the visitor operates), asks for the access that route needs, and stops at two gates (one style frame, one finished scene) before building the rest. Written after a day lost to a procedural WebGL world that never reached its references.
+- `scripts/board.mjs`: `capture` saves full-size frames of a public site scrolled by wheel; `pair` puts your frame beside a reference frame so the gap is judged on one image.
+- Intake Q9 (which sites should it stand next to) and Q10 (what the scroll does: travels between scenes, turns one object, plays a film), and a tools-and-access step that names what a route needs before any code.
+- Critique: a Bar axis, a board pairing in the review pass, two more blocking questions (does it hold up next to the board; was the reported frame re-captured), a Weakest line in the delivery note, and production anti-patterns (worlds built from code, quality judged from thumbnails, self-praise, silent fallbacks, video seeked per scroll event, clips that take the scroll away, bare cuts from footage to live 3D, NaN under bloom).
+- Eval `cinematic-world-no-assets`: a 3D brief with no material must lead to a bar, a route and an access request, not to code.
+### Fixed
+- perf spec: font files requested from `@font-face` have initiator type `css` and were counted as CSS weight; the font check runs first now. Copied to the site and the demos.
+
 ## 2026-11-03
 ### Added
 - `references/craft.md`: the mechanics of directed sites as numbers: one carrier through the chapters, chapter changes by a moving edge, text reveal families with hold minimums, pins and two horizontal forms (stepped track, rail with depth), loaders that become the hero, one easing signature, 2D/3D craft that holds up on phones, the pointer layer, page transitions, pace.

@@ -1,5 +1,5 @@
 export const repo = 'https://github.com/r33hab/stagecraft';
-export const version = '1.0.0';
+export const version = '1.1.0';
 
 // The sixteen directions, reduced to what a specimen card can show with three loaded faces.
 export const directions = [

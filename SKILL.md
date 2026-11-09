@@ -1,7 +1,7 @@
 ---
 name: stagecraft
 description: "Design and build award-calibre, animated, scroll-driven storytelling websites (launch pages, portfolios, studio and product sites, campaign microsites, long-read reports) that still run smoothly on low-end phones, with a bundled Playwright suite that enforces performance, accessibility, motion and responsive budgets. Use whenever someone wants a site that should wow, raise eyes, win awards, feel cinematic, immersive, kinetic, premium or 'like the award-winning ones'; asks for scroll animations, WebGL or 3D heroes, page transitions, preloaders, scrollytelling, a portfolio or landing page with real craft; asks for several design directions or variations of a page; wants an existing marketing site audited for motion, performance or 'looks generic'; or wants Playwright tests for an animated site. Also use for 'make it less templated', 'add some wow' and 'redesign the landing page' requests, even when no award is mentioned."
-version: 1.0.0
+version: 1.1.0
 ---
 
 # Stagecraft
@@ -37,7 +37,9 @@ one thing worth showing (Q5), how people should move through it (Q6: one scroll,
 routes into pages, chapters as pages) and what material exists (Q7: photography or illustration, the
 product or a model of it, footage or the work itself, or nothing yet). Ask where people will mostly
 see it (Q8: on a computer, everywhere about equally, mostly on phones) whenever the brief does not say:
-it decides which device gets the full experience and which budgets fail the build. Never ask about frameworks or libraries; the answers
+it decides which device gets the full experience and which budgets fail the build. For a Cinematic or
+3D brief, or one that names awards, also ask which sites it should stand next to (Q9) and what the
+scroll does (Q10). Never ask about frameworks or libraries; the answers
 decide the stack and you state it in one plain sentence. If the person says "just build it", take
 the recommended defaults, choose the signature and the page map yourself, and say so.
 
@@ -75,6 +77,28 @@ not material; leave them out.
 
 When the brief is open or the person asked for options, run the variations protocol in
 `directions.md` (three sketches, recommend one, build the pick).
+
+### 1b. The bar, the route and the gates (Cinematic, 3D, or "award" briefs)
+Read `references/production.md` and do these before any scene is built. Skipping them is how a
+day goes into procedural WebGL that never reaches the bar.
+- **The bar.** Capture four to eight frames from two or three sites at the level asked for
+  (`scripts/board.mjs capture <url>`), look at them at full size, and write `docs/bar.md`: what the
+  frames share and the three to five rules the build keeps because of it.
+- **The route.** For each scene, pick how its frames get made from the table in `production.md`
+  (photography or footage, a real model on a studio set, a generated model cleaned and baked in
+  Blender, an offline render or generated video as an image sequence, a filmed interface, a
+  drawing). Live WebGL only for what the visitor operates. Landscapes, forests, water, weather and
+  "drone flights" are never drawn live. Ask "what would a studio use for this frame", not "what can
+  be coded".
+- **Access.** When the route needs a key, a model, a licence or the client's material, ask for it in
+  one message with what it buys and the rough cost, and wait. Never fall back silently to what can
+  be coded without it.
+- **Gate 1, style frame.** One still of the hero scene at target quality, paired with the closest
+  board frame (`scripts/board.mjs pair mine.png reference.png`). Show the pair; build nothing more
+  until the person says yes. If no still holds up next to the board, change the route or the concept.
+- **Gate 2, vertical slice.** One scene finished in the browser (hook, stop, signature, one
+  transition out), paired with the board, shown. Then the rest, each scene paired before the next.
+At every gate, name the weakest part yourself and never call your own frames impressive.
 
 ### 2. Page map and stack
 Q6 decides the page map before any chapter list (`references/ux.md`, "Page map"): a landing that
@@ -163,14 +187,21 @@ open single frames at full size on both sides of each chapter change. Each quest
    works), or only type and boxes?
 5. Is every big move about the subject? An object that is not the product, the place, the mechanism
    or the work is an ornament: cut it.
+6. Next to the board (`docs/bar.md`), does it hold up? Pair three of your frames with board frames
+   (`scripts/board.mjs pair`), open each pair at 100 %, and name the three largest differences in
+   material, light and composition. "Better than the last version" is not an answer, and a frame
+   with no defects can still be amateur. Contact sheets are for timing; quality is judged at 1:1.
+7. After a fix, was the reported frame itself re-captured and looked at, not a neighbour?
 Compare the sheets with the hook and transitions you planned in `docs/concept.md`; say plainly where
 the result falls short.
 Fix, re-capture, then check the anti-pattern list and deliver with:
 
 ```
 Concept: <one sentence>  Direction: <name>  Signature: <moment>
+Bar: <the reference sites>  Route: <how the frames were made>  Gates: <who approved the style frame and the slice>
+Weakest: <the frame that falls furthest short of the board, and why>
 Stack: <one line, why>
-Scores: C S Ch Cr P U
+Scores: C S Ch Cr P U (and B, the bar, when there is a board)
 Budgets (mobile-low): LCP … CLS … scripts … KB  frame p95 … ms  total … KB
 Tests: <passed/failed per spec>, baselines created
 Open: <placeholders to fill, assets to supply, anything skipped and why>
@@ -181,6 +212,7 @@ Open: <placeholders to fill, assets to supply, anything skipped and why>
 | Need | File |
 |---|---|
 | the questions, defaults and the answer-to-stack tables | `references/intake.md` |
+| the reference board, production routes (real, generated, rendered, filmed), what cannot be drawn live, the style-frame and vertical-slice gates, asking for access, mechanics that cost hours | `references/production.md` |
 | the sixteen directions, remix axes, variations protocol | `references/directions.md` |
 | the numbers: carrier, chapter edges, text reveal and hold, pins, horizontal, loader, easing, 2D/3D craft, pointer, page transitions, pace | `references/craft.md` |
 | the arc, chapter types, transitions, gates, endings | `references/story.md` |
@@ -199,7 +231,8 @@ Runtime helpers to copy into a project: `assets/runtime/` (`tier.ts`, `reveal.ts
 `lenis-gsap.ts`, `motion.css`, and `hero-scene.ts` for a real GLB). Test suite: `assets/tests/`.
 Scripts: `scripts/add-tests.mjs`, `scripts/check-budgets.mjs`, `scripts/frames.mjs` (watch a page
 frame by frame and judge its reading pace), `scripts/film.mjs` (film a page as a video loop),
-`scripts/explode-gltf.mjs` (split a model into parts for an exploded view).
+`scripts/explode-gltf.mjs` (split a model into parts for an exploded view), `scripts/board.mjs`
+(capture reference frames from public sites; pair your frame with a reference at full size).
 
 ## Audit flow (`stagecraft audit`)
 
