@@ -12,6 +12,7 @@ is "people will screenshot it". Anything under 3 on any axis means another pass 
 | **Choreography** | effects bolted on, everything fades up, chapters restart | motion has a hierarchy and one signature moment | a carrier through the chapters, every change a moving edge with overlap, copy holds, nothing competes with the signature |
 | **Craft** | default fonts, pure black, cards with shadows | tokens, fluid type, considered colour, one easing family | type, colour, spacing, easing and copy all read as one hand |
 | **Performance** | over budget on phones | within budget on mobile-low | lean: under half the budgets, scene lazy, 60 fps on device |
+| **Bar** (Cinematic, 3D and award briefs) | never compared with a reference; judged against its own earlier version | paired with the board; differences named | a frame of it can sit beside a board frame without apology |
 | **Usability** | hidden nav, hijacked scroll, no focus ring, copy you cannot read in time | floor met (keyboard, reduced motion, contrast, 320 px, reading spec green) | the accessible path is as designed as the main one |
 
 Stamp the scores at the top of the delivery note and in a comment at the top of the main stylesheet:
@@ -28,6 +29,9 @@ Stamp the scores at the top of the delivery note and in a comment at the top of 
 5. Reduced motion: run the `reduced-motion` project; open the site with the OS setting on.
 6. Keyboard only: Tab from the top to the footer; everything reachable, everything visible.
 7. Real device when possible; say which device was used.
+7b. The bar: pair three frames with the board (`scripts/board.mjs pair`), open each at 100 %, write
+   the three largest differences per pair in the delivery note. Re-capture any frame the person
+   reported before calling it fixed.
 8. Scroll length: read `scroll length (screens)` from the perf table. Over 12 on the landing,
    raise Q6 of the intake (a page map, `ux.md`) instead of adding chapters.
 
@@ -84,6 +88,20 @@ Motion
 - Screen recordings of a site played full bleed behind another site's copy: two interfaces stack.
 - Content stuck at opacity 0; pinned sections that overlap the next chapter.
 - `will-change: transform` on 200 elements; debug panels (Tweakpane, lil-gui, stats.js) shipped.
+
+Production (each of these cost a day once)
+- A world built from code: terrain from a heightmap with a texture, cone or billboard trees, a tube
+  for a river or a power line, boxes for buildings. It reads as a tech demo next to any reference;
+  the route was wrong, not the shader (`production.md`, sections 2 and 3).
+- No reference board, or a board nobody looked at after the first hour.
+- The full build shown before a style frame or one finished scene was approved.
+- Quality judged from contact sheets or thumbnails; a fix declared from a neighbouring frame.
+- "Impressive", "beautiful" or "good looking" in the builder's own delivery note.
+- A silent fallback to what could be coded when the route needed a model, a key or footage.
+- A video seeked on every scroll event (stutters); a clip that plays to the next stop on its own
+  once started (the visitor has lost the scroll); a bare cut or crossfade from footage to live 3D.
+- Four visual languages in one frame (realistic ground, glowing lines, a map, boxed labels).
+- A halo with black specks around anything bright: a NaN under bloom, not a look.
 
 Performance and UX
 - 10 to 26 MB first views from eager preloading of every project image.

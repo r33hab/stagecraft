@@ -2,9 +2,26 @@
 import Base from '../layouts/Base.astro';
 import { repo, questions, doors, version, directions, reel } from '../data/site';
 import compare from '../data/compare.json';
+import { getImage } from 'astro:assets';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const story = compare.demos.find((d) => d.id === 'story')!.skill.metrics;
-const drives = ['drives the story shape and the end action', 'drives the stack: static files, a CMS, or their codebase', 'drives the tier ladder and the budget', 'three or four directions in plain words, or three sketches to pick from', 'decides which device gets the full version and which budgets fail the build'];
+const drives = ['the story shape and the end action', 'the stack: static files, a CMS, or their codebase', 'the tier ladder and the budget', 'the direction: type, colour and motion signature', 'which device gets the full version'];
+const install = '/plugin install stagecraft --marketplace r33hab/stagecraft';
+// The pairs behind the dive: the same brief built with and without the skill, with the numbers the suite measured.
+const shots = import.meta.glob<{ default: ImageMetadata }>('../assets/shots/*.jpg', { eager: true });
+const still = async (name: string) => (await getImage({ src: shots[`../assets/shots/${name}.jpg`].default, width: 1120, format: 'webp', quality: 74 })).src;
+const pairs = await Promise.all(reel.map(async (r) => {
+  const d = compare.demos.find((x) => x.id === r.slug)!;
+  const row = (m: typeof d.skill.metrics) => [m.testsPassed.replace(/ /g, ''), String(m.axeSerious), `${(m.lcpMs / 1000).toFixed(1)} s`];
+  return { slug: r.slug, title: r.title, kind: r.kind, skill: row(d.skill.metrics), base: row(d.baseline.metrics), caught: d.baseline.caught, failed: ((m) => +m[1] - +m[0])(d.baseline.metrics.testsPassed.split('/').map((x) => x.trim())), total: d.baseline.metrics.testsPassed.split('/')[1].trim(), img: { skill: await still(d.skill.shot), base: await still(d.baseline.shot) } };
+}));
+const measured = ['Suite checks passed', 'Serious accessibility faults', 'Largest paint, slow phone'];
+const production = [
+  ['The bar', 'For a cinematic or 3D brief it first collects frames from the sites yours should stand next to, and writes down what they share.'],
+  ['The route', 'Each scene gets the production it needs: a real model, a render, generated footage, or type alone. Live 3D is kept for what you operate.'],
+  ['The gates', 'You see one style frame, then one finished scene, each beside a reference. Nothing else is built until you say yes.'],
+];
+const prompts = ['build me a launch page for …', 'stagecraft variations 3', 'stagecraft audit https://…', 'stagecraft test'];
 ---
 <Base title="stagecraft · a Claude Code skill" description="stagecraft is a Claude Code skill that directs and builds animated, scroll-driven websites and tests them like software: performance, accessibility, motion and reading time, in five browsers." slug="home">
   <div class="journey" data-journey>
@@ -14,14 +31,17 @@ const drives = ['drives the story shape and the end action', 'drives the stack: 
     <div class="hero__copy" data-journey-copy>
       <p class="label" data-reveal>A Claude Code skill · v{version}</p>
       <h1 class="hero__title" id="hero-title" data-reveal data-reveal-group>
-        <span class="line"><span class="line__inner">Directed</span></span>
-        <span class="line"><span class="line__inner">websites,</span></span>
-        <span class="line"><span class="line__inner">tested like</span></span>
-        <span class="line"><span class="line__inner">software.</span></span>
+        <span class="line"><span class="line__inner">Websites</span></span>
+        <span class="line"><span class="line__inner">that look</span></span>
+        <span class="line"><span class="line__inner">directed.</span></span>
       </h1>
-      <p class="lede" data-reveal style="margin-top:1.25rem">A brief goes in; a directed, tested site comes out. Plain questions, sixteen directions, twenty-one choreographed moves with real numbers, budgets, and a Playwright suite that watches the page the way a visitor reads it.</p>
+      <p class="lede" data-reveal style="margin-top:1.25rem">Ask Claude Code for a site in plain words. stagecraft picks a direction, choreographs the scroll, and proves the result with a Playwright suite in five browsers: speed, accessibility, motion and reading time.</p>
+      <div class="cmd" data-reveal>
+        <code class="cmd__t">{install}</code>
+        <button class="cmd__b" type="button" data-copy={install} aria-label="Copy the install command">Copy</button>
+      </div>
       <div class="hero__actions" data-reveal>
-        <a class="pill" href="#install">Install</a>
+        <a class="pill" href={`${base}/compare/`}>See it compared</a>
         <a class="pill pill--ghost" href={repo} rel="noopener">View on GitHub</a>
       </div>
     </div>
@@ -93,44 +113,54 @@ const drives = ['drives the story shape and the end action', 'drives the stack: 
     <p class="scroll-cue label" aria-hidden="true">Scroll</p>
   </section>
 
-  <p class="dive-cap" data-dive-cap><span class="label">Into the page</span><span class="dive-cap__t">Every site starts with a few plain questions.</span></p>
+  <p class="dive-cap" data-dive-cap><span class="label">Through the viewfinder</span><span class="dive-cap__t">One brief, built twice.</span></p>
 
-  <section class="jq hz" id="intake" data-theme="ink" aria-labelledby="intake-title" data-journey-q>
-    <div class="hz__track" data-hz-track>
-      <article class="hz__panel hz__panel--intro">
-        <div class="hz__body hz__body--wide">
-          <div class="chapter__head"><span>01 · Intake</span></div>
-          <h2 class="h2" id="intake-title">Questions nobody can answer wrong</h2>
-          <p class="lede">The person answering is usually not a front-end engineer, so the questions ask about the situation, never about tools. The answers decide the framework, the direction shortlist, the motion ceiling, the signature moment and the page map.</p>
+  <section class="jq proof" id="proof" data-theme="ink" aria-labelledby="proof-title" data-journey-q data-proof>
+    <div class="proof__grid">
+      <div class="proof__copy">
+        <div class="chapter__head" data-proof-bit><span>01 · Proof</span></div>
+        <h2 class="h2" id="proof-title" data-proof-bit>Same brief. Same model. Built twice.</h2>
+        <p class="lede" data-proof-bit>The only difference is the skill. On the first screen the two can look alike: drag the line to compare, then read what the same suite caught in the build without it.</p>
+        <div class="proof__tabs" role="group" aria-label="Choose a brief" data-proof-bit>
+          {pairs.map((p, i) => <button type="button" class="proof__tab" aria-pressed={i === 0 ? 'true' : 'false'} data-proof-tab={i}>{p.title}</button>)}
         </div>
-      </article>
-      {questions.map((q, i) => (
-        <article class="hz__panel" data-allow-hidden>
-          <span class="hz__n" aria-hidden="true">0{i + 1}</span>
-          <div class="hz__body">
-            <h3 class="hz__q">{q.q}</h3>
-            <ul class="q__list">{q.a.map((a) => <li>{a}</li>)}</ul>
-            <p class="label">{drives[i]}</p>
-          </div>
-        </article>
-      ))}
-      <article class="hz__panel hz__panel--end" data-theme="paper" data-allow-hidden>
-        <span class="hz__n" aria-hidden="true">→</span>
-        <div class="hz__body">
-          <h3 class="hz__q">Then the skill says the stack in one sentence.</h3>
-          <p class="label">"I'll build this as a static site with a content folder you edit as Markdown; it is the fastest option for phones and the simplest to host."</p>
+        <table class="proof__m" data-proof-bit>
+          <thead><tr><th scope="col"><span class="sr-only">Measured</span></th><th scope="col">With</th><th scope="col">Without</th></tr></thead>
+          <tbody>{measured.map((m, i) => <tr><th scope="row">{m}</th><td data-proof-skill={i}>{pairs[0].skill[i]}</td><td data-proof-base={i}>{pairs[0].base[i]}</td></tr>)}</tbody>
+        </table>
+        <div class="cmd cmd--wide" data-proof-bit>
+          <code class="cmd__t">{install}</code>
+          <button class="cmd__b" type="button" data-copy={install} aria-label="Copy the install command">Copy</button>
         </div>
-      </article>
+        <a class="link-arrow" href={`${base}/compare/`} data-proof-bit>All three pairs, every number</a>
+      </div>
+      <div class="proof__show">
+      <div class="ba" data-ba data-proof-bit style="--ba:50%">
+        {['base', 'skill'].map((arm) => (
+          <figure class={`ba__side ba__side--${arm}`}>
+            <img alt="" width="1120" height="700" decoding="async" data-ba-img={arm} data-thumb={pairs[0].img[arm as 'skill' | 'base']} />
+          </figure>
+        ))}
+        <span class="ba__half ba__half--l"><span class="ba__tag ba__tag--l">With stagecraft</span></span>
+        <span class="ba__half ba__half--r"><span class="ba__tag ba__tag--r">Without</span></span>
+        <i class="ba__line" aria-hidden="true"><b></b></i>
+        <input class="ba__range" type="range" min="0" max="100" value="50" step="1" aria-label="Move the line: left shows less of the build with stagecraft, right shows more" data-ba-range />
+      </div>
+      <div class="proof__caught" data-proof-bit>
+        <p class="proof__k">Caught without the skill · <span data-proof-failed>{pairs[0].failed} of {pairs[0].total}</span> checks failed</p>
+        <ul data-proof-caught>{pairs[0].caught.map((c) => <li>{c}</li>)}</ul>
+      </div>
+      </div>
     </div>
-    <p class="hz__rail label" aria-hidden="true"><span data-hz-progress>01</span> / 0{questions.length}</p>
+    <script type="application/json" data-proof-data set:html={JSON.stringify(pairs)}></script>
   </section>
 
   <section class="jd chapter doors" id="inside" aria-labelledby="doors-title" data-journey-doors>
     <div class="jd__grid">
       <div class="jd__copy">
-        <div class="chapter__head"><span>02 · Inside</span></div>
-        <h2 class="h2" id="doors-title">Go straight to what you came for</h2>
-        <p class="lede" style="margin-bottom:1.5rem">Four doors, each a page of its own: one click away rather than twenty screens down.</p>
+        <div class="chapter__head"><span>02 · Built with it</span></div>
+        <h2 class="h2" id="doors-title">Open the sites it built</h2>
+        <p class="lede" style="margin-bottom:1.5rem">Three briefs, each built by the skill and held to the same suite. Then four doors into how it works.</p>
         <ul class="doors__list">
           {doors.map((d, i) => (
             <li>
@@ -170,9 +200,33 @@ const drives = ['drives the story shape and the end action', 'drives the stack: 
     <span class="sr-only">The flow: intake, concept, page map, stack, tokens, story, static frame, motion, tiering, tests, critique.</span>
   </div>
 
+  <section class="chapter how" id="how" aria-labelledby="how-title">
+    <div class="chapter__head"><span>03 · How it works</span></div>
+    <div class="how__head">
+      <h2 class="h2" id="how-title" data-reveal>Five questions nobody can answer wrong</h2>
+      <p class="lede" data-reveal>They ask about your situation, never about tools. The answers decide the stack, the direction and how far the motion goes; the skill then says its choice in one sentence and builds.</p>
+    </div>
+    <ol class="how__qs" data-reveal data-reveal-group>
+      {questions.map((q, i) => (
+        <li class="how__q">
+          <span class="how__n">0{i + 1}</span>
+          <h3 class="how__t">{q.q}</h3>
+          <ul class="q__list">{q.a.map((a) => <li>{a}</li>)}</ul>
+          <p class="how__d"><span class="label">Decides</span> {drives[i]}</p>
+        </li>
+      ))}
+    </ol>
+    <div class="how__prod" data-reveal data-reveal-group>
+      <p class="label how__k">New in {version} · for cinematic and 3D briefs</p>
+      <ul class="how__cards">
+        {production.map(([k, t]) => <li><h3 class="how__t">{k}</h3><p>{t}</p></li>)}
+      </ul>
+    </div>
+  </section>
+
   <section class="chapter" id="install" data-theme="ink" aria-labelledby="install-title">
     <div class="ticks" aria-hidden="true"><i></i></div>
-    <div class="chapter__head"><span>03 · Install</span></div>
+    <div class="chapter__head"><span>04 · Install</span></div>
     <div class="install">
       <div>
         <h2 class="h2" id="install-title" data-reveal>One command</h2>
@@ -180,20 +234,19 @@ const drives = ['drives the story shape and the end action', 'drives the stack: 
       </div>
       <div data-reveal data-reveal-group>
         <p class="label" style="margin-bottom:.5rem">Install the skill</p>
-        <pre tabindex="0"><code>/plugin install stagecraft --marketplace r33hab/stagecraft</code></pre>
+        <div class="cmd cmd--wide"><code class="cmd__t">{install}</code><button class="cmd__b" type="button" data-copy={install} aria-label="Copy the install command">Copy</button></div>
         <p class="label" style="margin:1.25rem 0 .5rem">Or with npx</p>
-        <pre tabindex="0"><code>npx skills add r33hab/stagecraft -g -a claude-code</code></pre>
+        <div class="cmd cmd--wide"><code class="cmd__t">npx skills add r33hab/stagecraft -g -a claude-code</code><button class="cmd__b" type="button" data-copy="npx skills add r33hab/stagecraft -g -a claude-code" aria-label="Copy the npx command">Copy</button></div>
+        <p class="label" style="margin:1.25rem 0 .5rem">Then say</p>
+        <ul class="says">
+          {prompts.map((p) => <li class="cmd cmd--wide"><code class="cmd__t">{p}</code><button class="cmd__b" type="button" data-copy={p} aria-label={`Copy the prompt: ${p}`}>Copy</button></li>)}
+        </ul>
         <p class="label" style="margin:1.25rem 0 .5rem">Add the suite to any project</p>
         <pre tabindex="0"><code>node ~/.claude/skills/stagecraft/scripts/add-tests.mjs . \
   --base http://localhost:4321 --preview "npm run preview" --routes "/,/work"
 npm i -D @playwright/test @axe-core/playwright
 npx playwright install chromium firefox webkit
 npm run build &amp;&amp; npm run test:budgets &amp;&amp; npm run test:e2e</code></pre>
-        <p class="label" style="margin:1.25rem 0 .5rem">Then say</p>
-        <pre tabindex="0"><code>build me a launch page for …
-stagecraft variations 3
-stagecraft audit https://…
-stagecraft test</code></pre>
       </div>
     </div>
   </section>

@@ -223,14 +223,14 @@ function heroStage() {
 /* The journey: the frame rides a sticky stage. It builds a page in the hero, expands to full bleed, hosts the
    questions sideways, then docks beside the doors as a live preview. Durations are pixels of scroll. */
 type StageCtl = { wind: (k: number) => void; replay: (on: boolean) => void; fly: (p: number) => void; setWorld: (on: boolean) => void; setRes: (k: number) => void; sync: () => void; eye: () => { x: number; y: number; glass: number; ring: number } | null };
-function journey(stageCtl: StageCtl | null) {
+function journey(stageCtl: StageCtl | null, proofCtl: ProofCtl | null) {
   const spacer = document.querySelector<HTMLElement>('[data-journey]');
   const stage = spacer?.querySelector<HTMLElement>('[data-journey-stage]');
   if (!spacer || !stage || !motion) return;
   const q = (sel: string) => stage.querySelector<HTMLElement>(sel)!;
   const copy = q('[data-journey-copy]'), steps = q('[data-build-steps]'), frame = q('[data-build-frame]'), slot = q('[data-build-slot]');
-  const scene = q('[data-build-scene]'), pv = q('[data-build-pv]'), jq = q('[data-journey-q]'), track = q('[data-hz-track]'), rail = q('[data-hz-progress]');
-  const jd = q('[data-journey-doors]'), dock = q('[data-dock-slot]');
+  const scene = q('[data-build-scene]'), pv = q('[data-build-pv]'), jq = q('[data-journey-q]');
+  const jd = q('[data-journey-doors]'), dock = q('[data-dock-slot]'), cue = q('.scroll-cue');
   const cap = spacer.querySelector<HTMLElement>('[data-dive-cap]')!;
   const pvCtl = dockPreviews(frame, stage, stageCtl);
   const stageSky = stageCtl;
@@ -246,15 +246,12 @@ function journey(stageCtl: StageCtl | null) {
   vf.innerHTML = '<b></b><b></b><b></b><b></b><i class="vf__x"></i><span class="vf__l">16 fps</span><span class="vf__r">FT 25</span>';
   jq.prepend(vf);
   let irisTick: (() => void) | null = null;
-  const panels = track.children.length;
   const vh = () => innerHeight, vw = () => innerWidth;
   const rect = (el: HTMLElement) => { const r = el.getBoundingClientRect(), b = stage.getBoundingClientRect(); return { left: r.left - b.left, top: r.top - b.top, width: r.width, height: r.height }; };
-  const distance = () => Math.max(0, track.scrollWidth - vw());
   let tl: gsap.core.Timeline | null = null;
   const build = () => {
     tl?.scrollTrigger?.kill(); tl?.kill();
-    gsap.set([jq, jd], { autoAlpha: 0 }); gsap.set(track, { x: 0 }); gsap.set([copy, steps], { autoAlpha: 1, y: 0 }); gsap.set(scene, { opacity: 1 }); gsap.set(pv, { opacity: 0 });
-    gsap.set(track.querySelectorAll('.hz__n'), { xPercent: 0 });
+    gsap.set([jq, jd], { autoAlpha: 0 }); gsap.set([copy, steps, cue], { autoAlpha: 1, y: 0 }); gsap.set(scene, { opacity: 1 }); gsap.set(pv, { opacity: 0 });
     // The frame keeps its hero size and moves by transform only (no layout, no layout shift): cover on expand, exact on dock.
     const home = rect(slot);
     gsap.set(frame, { left: home.left, top: home.top, width: home.width, height: home.height, x: 0, y: 0, scale: 1, rotateX: 0, rotateY: 0, transformOrigin: '50% 50%', borderRadius: 6 });
@@ -272,22 +269,19 @@ function journey(stageCtl: StageCtl | null) {
     const resetCam = () => { fly.p = 0; stageSky?.fly(0); };
     resetCam();
     const rows = Array.from(frame.querySelectorAll<HTMLElement>('.bn__top, .bn__hud, .bn__rail, .build__console')), pageCopy = frame.querySelector<HTMLElement>('.bn__copy')!;
-    const introBits = Array.from(jq.querySelectorAll<HTMLElement>('.hz__panel--intro .chapter__head, .hz__panel--intro .h2, .hz__panel--intro .lede'));
+    const introBits = Array.from(jq.querySelectorAll<HTMLElement>('[data-proof-bit]'));
     gsap.set(introBits, { y: 0, autoAlpha: 1 });
-    // Pixels of scroll per beat. The questions move in steps: each panel holds, then the track glides to the next,
-    // so every question is readable for about a viewport instead of sliding past at scroll speed.
+    // Pixels of scroll per beat. The comparison holds for more than a viewport: it is the one screen to stop on.
     frame.dataset.pv = 'night';
-    const kids = Array.from(track.children) as HTMLElement[];
-    const stops = kids.map((k) => -Math.min(k.offsetLeft, distance()));
-    const d = { hold: vh() * 0.35, expand: vh() * 1.15, push: vh() * 0.8, intro: vh() * 0.85, step: vh() * 0.55, move: vh() * 0.65, dock: vh() * 0.8, end: vh() * 0.7 };
-    const slide = d.intro + (kids.length - 1) * (d.move + d.step);
-    spacer.style.height = `${vh() + d.hold + d.expand + d.push + slide + d.dock + d.end}px`;
+    const d = { hold: vh() * 0.35, expand: vh() * 1.15, push: vh() * 0.7, intro: vh() * 1.35, dock: vh() * 0.8, end: vh() * 0.7 };
+    spacer.style.height = `${vh() + d.hold + d.expand + d.push + d.intro + d.dock + d.end}px`;
     // The flight starts while the frame is still growing and runs on after it fills the screen.
     const pushAt = d.expand * 0.25, pushLen = d.expand * 0.75 + d.push, pushEnd = pushAt + pushLen;
     gsap.set(jq, { clipPath: 'inset(0px 0px 0px 0px round 0px)', backgroundColor: '' });
     // Moments of the flight (p 0..1) as timeline positions; the eyecup closes over CUP, the intake opens over IRIS.
     const flyAt = (p: number) => `expand+=${pushAt + p * pushLen}`;
-    const CUP = [0.72, 0.88], IRIS = [0.86, 1];
+    // The page takes over while the eyepiece is still small on screen: pushed further, its textures go soft.
+    const CUP = [0.56, 0.72], IRIS = [0.7, 0.9];
     const smooth = (a: number, b: number, x: number) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
     // The eyecup and the iris follow the eyepiece on screen every frame (the renderer projects it; without the live
     // scene they centre on the screen). The iris opens from the glass slowly, then fast, past the farthest corner.
@@ -296,7 +290,7 @@ function journey(stageCtl: StageCtl | null) {
     irisTick = () => {
       if (!tl) return;
       const p = (tl.time() - d.hold - pushAt) / pushLen;
-      if (p < CUP[0] || p > 1.02) {
+      if (p < CUP[0] || p > IRIS[1] + 0.04) {
         if (irisOn) { irisOn = false; cup.style.opacity = '0'; vf.style.opacity = '0'; jq.style.clipPath = 'inset(0px 0px 0px 0px round 0px)'; }
         return;
       }
@@ -310,7 +304,7 @@ function journey(stageCtl: StageCtl | null) {
       cup.style.setProperty('--ex', `${x.toFixed(1)}px`); cup.style.setProperty('--ey', `${y.toFixed(1)}px`); cup.style.setProperty('--er', `${ring.toFixed(1)}px`);
       jq.style.clipPath = `circle(${r.toFixed(1)}px at ${x.toFixed(1)}px ${y.toFixed(1)}px)`;
       vf.style.setProperty('--ix', `${x.toFixed(1)}px`); vf.style.setProperty('--iy', `${y.toFixed(1)}px`); vf.style.setProperty('--ir', `${r.toFixed(1)}px`);
-      vf.style.opacity = (1 - smooth(0.97, 1.02, p)).toFixed(3);
+      vf.style.opacity = (1 - smooth(IRIS[1] - 0.03, IRIS[1] + 0.03, p)).toFixed(3);
     };
     gsap.ticker.add(irisTick);
     // State follows the playhead (the timeline's own update), so it is right however the visitor arrives: a wheel,
@@ -324,9 +318,11 @@ function journey(stageCtl: StageCtl | null) {
         stageCtl?.setRes(t > d.hold * 0.25 && t < hideAt ? fullScale : 1);
         stageCtl?.setWorld(t < hideAt || t >= (L.dock ?? Infinity) - d.dock * 0.2);
         pvCtl.dock(t >= (L.end ?? Infinity) - d.dock * 0.12);
-        let n = 0; stops.forEach((_, i) => { if (t >= (L[`q${i}`] ?? Infinity) - d.move * 0.5) n = i; });
-        // the counter follows the question numbers: the intro counts toward 01, the closing panel stays on the last
-        if (rail) rail.textContent = String(Math.min(stops.length - 2, Math.max(1, n))).padStart(2, '0');
+        // the two builds load once the visitor starts down
+        if (t > 0) proofCtl?.arm();
+        proofCtl?.show(t >= hideAt - d.push * 0.3 && t < (L.dock ?? Infinity) + d.dock * 0.6);
+        // from the comparison on, the top bar (with Install) stays, whichever way the visitor scrolls
+        html.classList.toggle('top-keep', t >= hideAt);
       },
       scrollTrigger: { trigger: spacer, start: 'top top', end: 'bottom bottom', scrub: 0.8 } });
     tl.addLabel('hold', 0).to({}, { duration: d.hold })
@@ -341,32 +337,23 @@ function journey(stageCtl: StageCtl | null) {
       .to(pageCopy, { yPercent: -70, autoAlpha: 0, duration: d.expand * 0.35, ease: 'power2.in' }, `expand+=${d.expand * 0.2}`)
       .to(fly, { p: 1, duration: pushLen, ease: 'none', onUpdate: applyFly }, `expand+=${pushAt}`)
       // A caption holds while the camera flies (in once the frame fills the screen), then hands over to the intake.
-      .fromTo(cap, { autoAlpha: 0, y: vh() * 0.05 }, { autoAlpha: 1, y: 0, duration: vh() * 0.1, ease: 'power3.out' }, `expand+=${d.expand * 0.84}`)
-      .to(cap, { autoAlpha: 0, y: -vh() * 0.04, duration: vh() * 0.07, ease: 'power2.in' }, flyAt(0.85))
-      // The eyecup closes round the eyepiece, then the intake opens out of its glass (irisTick) and its copy rises.
-      .set([copy, steps], { autoAlpha: 0 }, `expand+=${d.expand}`)
+      .fromTo(cap, { autoAlpha: 0, y: vh() * 0.05 }, { autoAlpha: 1, y: 0, duration: vh() * 0.1, ease: 'power3.out' }, `expand+=${d.expand * 0.7}`)
+      .to(cap, { autoAlpha: 0, y: -vh() * 0.04, duration: vh() * 0.07, ease: 'power2.in' }, flyAt(IRIS[0] + 0.1))
+      // The eyecup closes round the eyepiece, then the comparison opens out of its glass (irisTick), already in place.
+      .set([copy, steps, cue], { autoAlpha: 0 }, `expand+=${d.expand}`)
       .set(jq, { autoAlpha: 1, backgroundColor: ink }, flyAt(IRIS[0]))
-      .fromTo(introBits, { y: vh() * 0.05, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: d.intro * 0.22, stagger: d.intro * 0.04, ease: 'power3.out' }, flyAt(0.95))
       .addLabel('slide', `expand+=${pushEnd}`)
       .addLabel('q0', 'slide')
       .to({}, { duration: d.intro }, 'slide');
-    // Stepped track: glide (power2.inOut), then hold. Each panel number drifts a little against its panel for depth.
-    let at = d.hold + pushAt + pushLen + d.intro;
+    const at = d.hold + pushAt + pushLen + d.intro;
     // the scene stops rendering once the intake covers it
     hideAt = d.hold + pushEnd;
     tl.set(scene, { opacity: 0 }, hideAt);
-    stops.forEach((x, i) => {
-      if (i === 0) return;
-      tl!.to(track, { x, duration: d.move, ease: 'power2.inOut' }, at);
-      const nOut = kids[i - 1].querySelector('.hz__n'), nIn = kids[i].querySelector('.hz__n');
-      if (nOut) tl!.to(nOut, { xPercent: -35, duration: d.move, ease: 'power2.in' }, at);
-      if (nIn) tl!.fromTo(nIn, { xPercent: 45 }, { xPercent: 0, duration: d.move, ease: 'power2.out' }, at);
-      tl!.addLabel(`q${i}`, at + d.move);
-      at += d.move + d.step;
-    });
     tl.addLabel('dock', at)
       // The carrier comes back: the docked frame shows the night page again; a door preview replaces it only on hover.
       .add(() => resetCam(), 'dock')
+      // the comparison fades while its panel folds into the dock, so the fold ends on plain ink
+      .to(introBits, { autoAlpha: 0, duration: d.dock * 0.32, ease: 'power1.in' }, 'dock')
       .set([...rows, pageCopy], { autoAlpha: 1, yPercent: 0 }, 'dock')
       .set(scene, { opacity: 1 }, 'dock')
       .to(frame, { ...docked(), ...tilt, borderRadius: 6, duration: d.dock, ease: 'power2.inOut' }, 'dock')
@@ -383,12 +370,12 @@ function journey(stageCtl: StageCtl | null) {
   addEventListener('resize', onResize, { passive: true });
   (document as any).fonts?.ready?.then(() => { build(); ScrollTrigger.refresh(); });
   later(() => {
-    removeEventListener('resize', onResize); tl?.kill(); html.classList.remove('has-journey');
+    removeEventListener('resize', onResize); tl?.kill(); html.classList.remove('has-journey', 'top-keep');
     if (irisTick) gsap.ticker.remove(irisTick);
     cup.remove(); vf.remove();
     // Leave the static layout exactly as the HTML wrote it (a tier demoted to low falls back to it).
     pvCtl.destroy();
-    gsap.set([jq, jd, track, frame, copy, steps, scene, pv, cap, ...Array.from(stage.querySelectorAll('.hz__n, .bn__sky, .bn__top, .bn__hud, .bn__rail, .bn__copy, .build__console, .hz__panel--intro *'))], { clearProps: 'all' });
+    gsap.set([jq, jd, frame, copy, steps, cue, scene, pv, cap, ...Array.from(stage.querySelectorAll('.bn__sky, .bn__top, .bn__hud, .bn__rail, .bn__copy, .build__console, [data-proof-bit]'))], { clearProps: 'all' });
     spacer.style.height = ''; slot.append(frame);
   });
 }
@@ -501,6 +488,74 @@ function dockPreviews(frame: HTMLElement, stage: HTMLElement, stageCtl: StageCtl
       frame.dataset.pv = 'night'; stageCtl?.replay(false);
     },
   };
+}
+
+/* Proof: the same brief built with and without the skill, one over the other, split at a line the visitor drags
+   (a range input over the picture, so it also works from the keyboard). The pictures load only when asked. */
+type ProofCtl = { arm: () => void; show: (on: boolean) => void; watch: () => void };
+function proof(): ProofCtl | null {
+  const root = document.querySelector<HTMLElement>('[data-proof]');
+  const json = root?.querySelector('[data-proof-data]');
+  if (!root || !json) return null;
+  const pairs = JSON.parse(json.textContent || '[]') as Array<{ title: string; kind: string; skill: string[]; base: string[]; caught: string[]; failed: number; total: string; img: Record<string, string> }>;
+  const ba = root.querySelector<HTMLElement>('[data-ba]')!, range = root.querySelector<HTMLInputElement>('[data-ba-range]')!;
+  const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-proof-tab]'));
+  const arms = ['skill', 'base'].map((arm) => [arm, root.querySelector<HTMLImageElement>(`[data-ba-img="${arm}"]`)!] as const);
+  let armed = false, on = false, cur = 0, touched = false;
+  const load = () => arms.forEach(([arm, i]) => { const src = pairs[cur].img[arm]; if (i.getAttribute('src') !== src) i.src = src; });
+  const set = (x: number) => { ba.style.setProperty('--ba', `${x}%`); };
+  const onInput = () => { touched = true; set(+range.value); };
+  range.addEventListener('input', onInput);
+  // under a pointer the line sits exactly where the pointer is (a native range insets its thumb by half its width)
+  const onDrag = (e: PointerEvent) => {
+    if (e.type === 'pointermove' && !e.buttons && e.pointerType === 'mouse') return;
+    const r = ba.getBoundingClientRect(), x = Math.min(100, Math.max(0, ((e.clientX - r.left) / r.width) * 100));
+    touched = true; range.value = String(Math.round(x)); set(x);
+  };
+  range.addEventListener('pointerdown', onDrag); range.addEventListener('pointermove', onDrag);
+  const pick = (k: number) => {
+    cur = k;
+    tabs.forEach((t, i) => t.setAttribute('aria-pressed', String(i === k)));
+    pairs[k].skill.forEach((v, i) => { const c = root.querySelector(`[data-proof-skill="${i}"]`); if (c) c.textContent = v; });
+    pairs[k].base.forEach((v, i) => { const c = root.querySelector(`[data-proof-base="${i}"]`); if (c) c.textContent = v; });
+    const list = root.querySelector('[data-proof-caught]'), failed = root.querySelector('[data-proof-failed]');
+    if (list) list.replaceChildren(...pairs[k].caught.map((c) => { const li = document.createElement('li'); li.textContent = c; return li; }));
+    if (failed) failed.textContent = `${pairs[k].failed} of ${pairs[k].total}`;
+    if (armed) load();
+  };
+  const onTab = (e: Event) => pick(tabs.indexOf(e.currentTarget as HTMLButtonElement));
+  tabs.forEach((t) => t.addEventListener('click', onTab));
+  let hint: gsap.core.Tween | null = null, io: IntersectionObserver | null = null;
+  const ctl: ProofCtl = {
+    arm: () => { if (armed) return; armed = true; load(); },
+    show: (next) => {
+      if (next === on) return;
+      on = next; if (on) ctl.arm();
+      // the first time it shows, the line sweeps once so it reads as something to drag
+      if (on && !touched && motion && !hint) { const o = { x: 50 }; hint = gsap.timeline({ delay: 0.5 }).to(o, { x: 68, duration: 0.7, ease: 'power2.inOut', onUpdate: () => { if (!touched) { set(o.x); range.value = String(Math.round(o.x)); } } }).to(o, { x: 50, duration: 0.9, ease: 'power2.inOut', onUpdate: () => { if (!touched) { set(o.x); range.value = String(Math.round(o.x)); } } }) as unknown as gsap.core.Tween; }
+    },
+    // without the journey the section is ordinary page: it loads as it nears the screen
+    watch: () => { io?.disconnect(); io = new IntersectionObserver((es) => ctl.show(es.some((e) => e.isIntersecting)), { rootMargin: '200px 0px' }); io.observe(ba); },
+  };
+  // (the slider and the tabs keep their listeners: they live and die with the page's own elements)
+  const off = () => { hint?.kill(); io?.disconnect(); };
+  later(off);
+  demoted.push(() => { on = false; later(off); ctl.watch(); });
+  return ctl;
+}
+
+/* Copy buttons: the command goes to the clipboard and the button says so. */
+function copyButtons() {
+  document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((b) => {
+    let t = 0;
+    b.addEventListener('click', async () => {
+      const text = b.dataset.copy || '';
+      try { await navigator.clipboard.writeText(text); }
+      catch { const ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.append(ta); ta.select(); try { document.execCommand('copy'); } catch { /* nothing to fall back to */ } ta.remove(); }
+      b.textContent = 'Copied'; b.toggleAttribute('data-copied', true);
+      clearTimeout(t); t = window.setTimeout(() => { b.textContent = 'Copy'; b.removeAttribute('data-copied'); }, 1600);
+    });
+  });
 }
 
 /* Directions dial: a sticky stage; the card re-themes per step with a short crossfade. */
@@ -676,7 +731,7 @@ function init() {
   html.classList.remove('menu-open');
   cursorEl = document.querySelector<HTMLElement>('[data-cursor]');
   initReveals();
-  const stageCtl = heroStage(); journey(stageCtl); directionsStage(); stack(); counters(); menu(); marquees(); stillThumbs();
+  const stageCtl = heroStage(); const proofCtl = proof(); journey(stageCtl, proofCtl); if (!document.documentElement.classList.contains('has-journey')) proofCtl?.watch(); copyButtons(); directionsStage(); stack(); counters(); menu(); marquees(); stillThumbs();
   (document as any).fonts?.ready?.then(() => ScrollTrigger.refresh());
   if (navigated) { navigated = false; document.querySelector<HTMLElement>('h1')?.focus({ preventScroll: true }); }
 }

@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-11-10
+### Changed
+- Site: the comparison is in place as the eyepiece's glass opens and the darkening around it is lighter, so the hand-over no longer passes through a near-black screen.
+- Site: the comparison lists what the suite caught in each build made without the skill (from the recorded runs), and says plainly that the two opening screens can look alike.
+
+## 2026-11-09
+### Added
+- `references/production.md` and step 1b of the build flow: for Cinematic, 3D and award briefs the skill now sets a bar (a board of reference frames), picks a production route per scene (real or generated models, offline or generated footage, live WebGL only for what the visitor operates), asks for the access that route needs, and stops at two gates (one style frame, one finished scene) before building the rest. Written after a day lost to a procedural WebGL world that never reached its references.
+- `scripts/board.mjs`: `capture` saves full-size frames of a public site scrolled by wheel; `pair` puts your frame beside a reference frame so the gap is judged on one image.
+- Intake Q9 (which sites should it stand next to) and Q10 (what the scroll does: travels between scenes, turns one object, plays a film), and a tools-and-access step that names what a route needs before any code.
+- Critique: a Bar axis, a board pairing in the review pass, two more blocking questions (does it hold up next to the board; was the reported frame re-captured), a Weakest line in the delivery note, and production anti-patterns (worlds built from code, quality judged from thumbnails, self-praise, silent fallbacks, video seeked per scroll event, clips that take the scroll away, bare cuts from footage to live 3D, NaN under bloom).
+- Eval `cinematic-world-no-assets`: a 3D brief with no material must lead to a bar, a route and an access request, not to code.
+### Changed
+- Site home: the proof comes first. The camera dive now opens on one brief built with and without the skill under a line you drag (three briefs, with the suite's numbers for each), then the sites it built; before, seven screens of intake questions sat between the hero and any proof.
+- Site home: the five questions are one section after the journey, with the 1.1.0 bar, route and gates beside them; the headline sells the result ("Websites that look directed"); the install command is in the hero with a copy button, and every command and prompt in the install section copies.
+- Site home: the dive hands over to the page while the eyepiece is still small on screen, instead of pushing on into a soft close-up of its texture.
+- README: a filmed walkthrough of the site (`docs/stagecraft.webp`) and a "Prompts to try" section.
+### Fixed
+- perf spec: font files requested from `@font-face` have initiator type `css` and were counted as CSS weight; the font check runs first now. Copied to the site and the demos.
+
 ## 2026-11-03
 ### Added
 - `references/craft.md`: the mechanics of directed sites as numbers: one carrier through the chapters, chapter changes by a moving edge, text reveal families with hold minimums, pins and two horizontal forms (stepped track, rail with depth), loaders that become the hero, one easing signature, 2D/3D craft that holds up on phones, the pointer layer, page transitions, pace.

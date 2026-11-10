@@ -28,6 +28,10 @@
         "path": "demos/nordlys-baseline/",
         "shot": "nordlys-base",
         "signature": "A canvas aurora behind the tagline, a countdown, driver cards, a bar chart of results, an SVG circuit with an animated dot.",
+        "caught": [
+          "Three spec labels fall below the contrast minimum (axe: serious)",
+          "The page scrolls sideways on a 320 px phone"
+        ],
         "metrics": {
           "lcpMs": 504,
           "cls": 0,
@@ -71,6 +75,11 @@
         "path": "demos/portfolio-baseline/",
         "shot": "portfolio-base",
         "signature": "A serif name, the statement, a work list with SVG thumbnails on hover, a case study with a small timeline demo.",
+        "caught": [
+          "A clock below the contrast minimum, and a timeline missing its required ARIA children (axe: critical)",
+          "The skip link does not move focus to the content",
+          "Links 17 px tall on phones, under the 24 px minimum"
+        ],
         "metrics": {
           "lcpMs": 504,
           "cls": 0.026,
@@ -114,6 +123,11 @@
         "path": "demos/story-baseline/",
         "shot": "story-base",
         "signature": "A fixed three.js canvas with the same model and light, a camera pose per chapter, the turret disc rotating, an exploded view, a winding dial, a film-leader loader and grain.",
+        "caught": [
+          "Wider than the screen at every width tested, by 48 to 177 px",
+          "Content still hidden after a full scroll, in all five browser profiles",
+          "No visible focus mark on the email field"
+        ],
         "metrics": {
           "lcpMs": 3856,
           "cls": 0,
