@@ -31,7 +31,7 @@ existing files alone unless `--force`.
 | File | Checks | Fails when |
 |---|---|---|
 | `smoke.spec.ts` | every route loads; one `h1`; `lang`; title; meta description; `main` landmark; no console errors; no failed requests; third-party script hosts counted | any error or missing basic |
-| `responsive.spec.ts` | widths 320, 375, 414, 768, 1024, 1440: no horizontal overflow; 200 % zoom at 640; touch targets 44 px on mobile projects; text not clipped by `overflow: hidden` ancestors (headings) | overflow, tiny targets, clipped heading |
+| `responsive.spec.ts` | widths 320, 375, 414, 768, 1024, 1440: no horizontal overflow; 200 % zoom at 640; touch targets 44 px on mobile projects; text not clipped by `overflow: hidden` ancestors (headings); on mobile projects, text drawn over other text: every line of text at any size, decorative and `aria-hidden` included, at the top four times through the intro and then every quarter screen down; a pair counts when nothing opaque lies between them; fixed chrome counts at the top only | overflow, tiny targets, clipped heading, text over text (opt out with `data-allow-overlap`) |
 | `a11y.spec.ts` | axe (WCAG 2.2 AA tags) at top and after full scroll; Tab order reaches the footer; every focused element visible on screen and has a visible ring; skip link moves focus; Escape closes a menu if present | serious or critical violations; focus lost or invisible |
 | `motion.spec.ts` | never-stuck: after a slow full scroll, no text, heading, image or `[data-reveal]` in view under 0.9 opacity or translated off; page height stable after settle (pin spacers); keyboard scroll works (End, PageDown); preloader gone within budget and skipped on second navigation; custom cursor hidden on touch; reduced-motion project: no running infinite animations, no autoplaying video, no smooth-scroll class | any of those |
 | `perf.spec.ts` (Chromium projects) | LCP, CLS, long tasks during scripted scroll, frame-time p95 during scroll, transfer by type (script, css, font, image, media), font families count, DOM nodes, hero image attributes | budget exceeded (`stagecraft.budgets.json`) |
@@ -39,7 +39,8 @@ existing files alone unless `--force`.
 | `visual.spec.ts` | screenshots at top and 50 % on `desktop` and `mobile-low`, animations disabled, `[data-dynamic]`, video and canvas masked where they are painted on top | diff over `maxDiffPixelRatio` (0.02) |
 
 Visual baselines are created on the first local run (the test passes and writes them under
-`tests/stagecraft/__screenshots__`); commit them and regenerate on purpose with
+`tests/stagecraft/__screenshots__`). A first baseline records whatever is on screen, broken or not:
+open every capture, the `mobile-low` ones above all, before you commit them and regenerate on purpose with
 `npx playwright test --update-snapshots`. In CI (`CI=1`) a missing baseline fails. Baselines are
 per browser and OS: generate them in CI's image when CI runs them.
 

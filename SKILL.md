@@ -144,6 +144,8 @@ Alternate dense and air chapters. Write the real copy now (no lorem ipsum, no in
 Rules that hold in every direction (each one is a flaw seen often on high-end sites):
 - Custom cursor and magnetic effects only on `(hover: hover) and (pointer: fine)`.
 - `100svh` heroes; nothing important in the bottom 80 px on phones.
+- A pinned screen fits a phone's small viewport (Safari, about 390 x 660): copy from the top under the bar,
+  never centred, so a stack taller than the screen cannot spill under it.
 - Animate `transform`, `opacity`, `clip-path` and registered custom properties only; no `filter`
   or `backdrop-filter` on large areas; no animated grain.
 - One ticker (`assets/runtime/lenis-gsap.ts`), one rAF loop, cleanup on every navigation.
@@ -160,7 +162,7 @@ npm i -D @playwright/test@^1.64 @axe-core/playwright@^4.14 && npx playwright ins
 npm run build && npm run test:budgets && npm run test:e2e
 ```
 The suite (`references/testing.md`) runs five projects (desktop, throttled low-end Android, iPhone
-WebKit, Firefox, reduced motion) and checks smoke, responsive widths and touch targets, axe plus
+WebKit, Firefox, reduced motion) and checks smoke, responsive widths, touch targets and text drawn over text on phones, axe plus
 keyboard order and focus visibility, the never-stuck reveal rule, layout stability, keyboard
 scrolling, preloader and cursor rules, reduced motion, Core Web Vitals and weight against
 `stagecraft.budgets.json`, and visual baselines. Fix the site, not the budgets; loosen a budget
@@ -174,10 +176,12 @@ project, tab through the page. Then watch the motion the way a visitor meets it,
 
 ```bash
 node <skill>/scripts/frames.mjs http://localhost:4321/ --out .stagecraft/frames
+node <skill>/scripts/frames.mjs http://localhost:4321/ --out .stagecraft/frames-phone --mobile
 ```
 
 It scrolls at a steady reading pace, records every frame, and writes contact sheets, a timeline of
-when each block of copy becomes readable and how long it holds, and a verdict. Open every sheet, and
+when each block of copy becomes readable and how long it holds, and a verdict. The phone run is not optional: on a 390 px screen the layout stacks, pins into a
+shorter screen and wraps its labels, so it collides where desktop never does. Open every sheet, and
 open single frames at full size on both sides of each chapter change. Each question is a blocker:
 1. Is every piece of copy readable long enough? (verdict clean; `reading.spec.ts` green)
 2. Does any chapter change cut, fade to an empty colour, or stack copy on copy? (a moving edge with

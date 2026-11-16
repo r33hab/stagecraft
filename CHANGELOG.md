@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-11-16
+### Added
+- responsive spec: `no text collisions` on the phone projects. Every line of text at any size, decorative and `aria-hidden` included, is checked for text drawn over it, at the top through the intro and every quarter screen down. The reading spec only watched large copy on desktop, so a phone hero with its headline under the bar, a brief under its answer chips and a scroll cue over the step rail all passed. Copied to the site.
+- SKILL.md: a pinned screen must fit Safari's small viewport (about 390 x 660); the review step films the phone too (`frames.mjs --mobile`); testing.md warns that a first visual baseline records broken screens as well.
+### Fixed
+- Site, phones: the pinned hero no longer spills under the bar on a 660 px iPhone screen (copy from the top, the frame takes the rest); the brief and its answer chips stack instead of overlapping; the step rail fits one line and the scroll cue no longer sits on it; the hero actions stay on one row at 375 px; the camera stays in view while the frame grows on a portrait screen (its sideways offset shrinks with the share of the frame on screen); the install section's long commands sit in a visible scroll box. Desktop renders are unchanged.
+
 ## 2026-11-10
 ### Changed
 - Site: the comparison is in place as the eyepiece's glass opens and the darkening around it is lighter, so the hand-over no longer passes through a near-black screen.

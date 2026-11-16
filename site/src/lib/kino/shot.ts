@@ -11,6 +11,8 @@ export type StageState = {
   spin: number;   // turntable, radians
   dive: number;   // 0..1: the camera flies into the centre lens
   resScale: number;
+  crop: number;   // 0..1: share of the frame's width on screen; sx shrinks with it, so a portrait screen that crops the
+                  // grown frame keeps the body in view (1 wherever the whole width shows: every landscape screen)
   anchors: number[][];                       // points on the model (its own units), for labels in the scene
   screen: { x: number; y: number; on: boolean }[];   // written by the renderer: each anchor as a fraction of the canvas
 };
@@ -27,5 +29,5 @@ export function flight(p: number) {
 /** Points on the model (its units): the centre of the eyepiece's glass, a point on the glass's rim and one on the
  *  eyepiece ring's rim. The eyepiece looks out along -z. */
 export const EYE = [[-0.0116, 0.1032, -0.047], [-0.0089, 0.1032, -0.047], [-0.0044, 0.1032, -0.047]];
-export const stageDefaults = (): StageState => ({ shot: { ...REST }, look: { x: 0, y: 0 }, wire: 0, draw: 1, wipe: 1, light: 1, spin: 0, dive: 0, resScale: 1, anchors: [], screen: [] });
+export const stageDefaults = (): StageState => ({ shot: { ...REST }, look: { x: 0, y: 0 }, wire: 0, draw: 1, wipe: 1, light: 1, spin: 0, dive: 0, resScale: 1, crop: 1, anchors: [], screen: [] });
 export type Stage = Awaited<ReturnType<typeof import('./stage').createStage>>;

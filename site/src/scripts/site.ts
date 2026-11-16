@@ -191,6 +191,8 @@ function heroStage() {
     // the render size: the frame's own size at rest; once it starts to grow, the size it will have on the full screen
     // (set once, so the canvas is never reallocated while the frame scales)
     setRes: (k: number) => { if (Math.abs(ws.resScale - k) > 0.01) ws.resScale = k; },
+    // the share of the frame's width on screen while it covers a portrait screen (see StageState.crop)
+    setCrop: (k: number) => { ws.crop = Math.min(1, Math.max(0, k)); },
     sync: () => sync(),
     // the eyepiece on screen, in px: its centre, the radius of its glass and of its ring (null without the live scene)
     eye: () => {
@@ -316,6 +318,7 @@ function journey(stageCtl: StageCtl | null, proofCtl: ProofCtl | null) {
         const t = tl.time(), L = tl.labels;
         stageCtl?.wind(Math.min(1, Math.max(0, t / (d.hold + pushAt))));   // the build is at its end as the flight starts
         stageCtl?.setRes(t > d.hold * 0.25 && t < hideAt ? fullScale : 1);
+        stageCtl?.setCrop(vw() / (home.width * (gsap.getProperty(frame, 'scaleX') as number || 1)));
         stageCtl?.setWorld(t < hideAt || t >= (L.dock ?? Infinity) - d.dock * 0.2);
         pvCtl.dock(t >= (L.end ?? Infinity) - d.dock * 0.12);
         // the two builds load once the visitor starts down
