@@ -278,6 +278,8 @@ html[data-tier="low"] .stack__card, .is-static .stack__card { position: static; 
 /* Grid children never widen the page (long code lines scroll inside their pre). */
 .install > *, .suite > *, .cmp__grid > *, .grid > *, .proof__grid > *, .stage__panel { min-width: 0; }
 pre { max-width: 100%; }
+/* On ink a phone clips the long lines: the box edge says it scrolls rather than reading as cut-off text. */
+@media (max-width: 760px) { [data-theme="ink"] pre { border: 1px solid var(--line-strong); background: color-mix(in oklch, var(--fg) 5%, transparent); } }
 
 /* ---------- Hero stage: the skill builds a page ---------- */
 html:not(.js) .build { display: none; }
@@ -309,8 +311,7 @@ html:not(.js) .build { display: none; }
 .is-tokens .bp__card { background: color-mix(in oklch, currentColor 7%, transparent); } .is-tokens .bp__card i { background: var(--bp-accent); }
 .bp__foot { display: flex; justify-content: space-between; } .bp__foot i { display: block; width: 12%; height: 5px; }
 .build__brief, .build__q, .build__console { position: absolute; left: 7%; right: 7%; margin: 0; }
-.build__brief { top: 20%; font-size: clamp(.95rem, 3.2cqw, 1.5rem); line-height: 1.25; letter-spacing: -.015em; max-width: 22ch; opacity: 0; }
-.build__k { display: block; font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: .14em; text-transform: uppercase; color: var(--pen); margin-bottom: .6rem; }
+.build__brief { top: 20%; font-size: clamp(.95rem, 3.2cqw, 1.5rem); line-height: 1.25; letter-spacing: -.015em; max-width: 22ch; opacity: 0; }.build__k { display: block; font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: .14em; text-transform: uppercase; color: var(--pen); margin-bottom: .6rem; }
 .build__q { top: 56%; list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: .4rem; }
 .build__q li { font-family: var(--font-mono); font-size: clamp(.5rem, 1.5cqw, .7rem); letter-spacing: .08em; text-transform: uppercase; border: 1px solid var(--line-strong); padding: .35em .8em; border-radius: 999px; opacity: 0; }
 .build__q li::before { content: '[x] '; color: var(--pen); }
@@ -319,6 +320,14 @@ html:not(.js) .build { display: none; }
 .build__steps { list-style: none; margin: 0; padding: 0; display: flex; justify-content: space-between; gap: .5rem; flex-wrap: wrap; font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: .1em; text-transform: uppercase; color: var(--fg-faint); counter-reset: step; }
 .build__steps li { counter-increment: step; transition: color .3s; } .build__steps li::before { content: counter(step, decimal-leading-zero) ' '; }
 .build__steps li.is-active { color: var(--fg); } .build__steps li.is-active::before { color: var(--pen); }
+/* One column (phones, tablets upright): the brief and its answers stack in flow. At fixed offsets a brief that wraps
+   to five lines in a narrow frame, or a frame wider than 5:4, runs the brief into the answers. */
+@media (max-width: 900px) {
+  .build__scene { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; gap: .75rem; padding: 0 7% 4%; }
+  .build__brief, .build__q { position: relative; inset: auto; }
+  .build__brief { max-width: 34ch; }
+  .build__q li { font-size: .6rem; }
+}
 
 /* ---------- Doors ---------- */
 .doors__list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line-strong); }
@@ -397,6 +406,8 @@ html.menu-open { overflow: hidden; }
 .pill { border-radius: 4px; padding: .85rem 1.3rem; font-weight: 600; letter-spacing: -.01em; }
 .pill:not(.pill--ghost)::after { content: '→'; display: inline-block; transition: transform .3s var(--ease-out, ease); }
 .pill:not(.pill--ghost):hover::after { transform: translateX(.3em); }
+/* the two hero actions stay on one row down to a 375 px phone */
+@media (max-width: 420px) { .hero__actions { gap: .5rem; } .hero__actions .pill { padding-inline: 1rem; } }
 .pill--ghost { border-color: var(--line-strong); }
 .pill--ghost:hover { border-color: currentColor; }
 
@@ -462,7 +473,19 @@ html.js:not([data-tier="low"]) .door__promise { font-size: var(--text-sm); line-
   /* On a phone the sites are a three-way switch under the frame, like story segments. */
   html.js:not([data-tier="low"]) .ex { margin-top: .9rem; } html.js:not([data-tier="low"]) .ex__list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem; border-top: 0; }
   html.js:not([data-tier="low"]) .ex__item { border-bottom: 0; border-top: 2px solid var(--line-strong); } html.js:not([data-tier="low"]) .ex__bar { top: -2px; bottom: auto; }
-  html.js:not([data-tier="low"]) .ex__item a, html.js:not([data-tier="low"]) .ex__item:not(:has(.ex__thumb[src])) a { grid-template-columns: 1fr; gap: .15rem; padding: .45rem 0 0; } html.js:not([data-tier="low"]) .ex__name { font-size: var(--text-sm); white-space: normal; line-height: 1.2; } }
+  html.js:not([data-tier="low"]) .ex__item a, html.js:not([data-tier="low"]) .ex__item:not(:has(.ex__thumb[src])) a { grid-template-columns: 1fr; gap: .15rem; padding: .45rem 0 0; } html.js:not([data-tier="low"]) .ex__name { font-size: var(--text-sm); white-space: normal; line-height: 1.2; }
+  html.js:not([data-tier="low"]) .jd__grid { gap: 1.75rem; }
+  /* The pinned hero is one screen tall (Safari's small viewport is about 660 px on most iPhones). Copy from the top,
+     under the bar; the frame takes the rest. Centred, a hero taller than the screen spilled under the bar. */
+  html.js:not([data-tier="low"]) .hero { align-content: start; grid-template-rows: auto minmax(0, 1fr); row-gap: 1.25rem; padding-top: 5rem; padding-bottom: .75rem; }
+  html.js:not([data-tier="low"]) .build { align-self: stretch; grid-template-rows: minmax(10rem, 1fr) auto; min-height: 0; }
+  html.js:not([data-tier="low"]) .build__slot { aspect-ratio: auto; height: 100%; max-height: 80vw; }
+  /* the frame and its rail fill the screen to its foot, so the cue has nowhere to sit */
+  html.js:not([data-tier="low"]) .scroll-cue { display: none; }
+  /* The rail on one line: every number, the name of the step playing. */
+  html.js:not([data-tier="low"]) .build__steps { flex-wrap: nowrap; }
+  html.js:not([data-tier="low"]) .build__steps li:not(.is-active) { font-size: 0; }
+  html.js:not([data-tier="low"]) .build__steps li::before { font-size: var(--text-xs); } }
 
 }
 /* The docked frame: a reel of the sites the skill built, and one real preview per door. JS wipes the panes in

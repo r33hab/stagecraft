@@ -130,7 +130,8 @@ export async function createStage(canvas: HTMLCanvasElement, base: string, tier:
     }
     cam.up.set(Math.sin(s.roll), Math.cos(s.roll), 0);
     cam.aspect = w / h;
-    if (Math.abs(s.sx) > 1e-4) cam.setViewOffset(w, h, s.sx * w, 0, w, h); else cam.clearViewOffset();
+    const sx = s.sx * state.crop;
+    if (Math.abs(sx) > 1e-4) cam.setViewOffset(w, h, sx * w, 0, w, h); else cam.clearViewOffset();
     cam.updateProjectionMatrix(); cam.lookAt(target);
     turntable.rotation.y = state.spin;
     uWipe.value = state.wipe; uRes.value.set(w, h);
